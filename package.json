@@ -1,0 +1,25 @@
+{
+  "name": "visionroute-ai",
+  "version": "1.0.0",
+  "description": "VisionRoute AI - Smart Stream Guidance Platform",
+  "private": true,
+  "scripts": {
+    "dev": "concurrently \"npm run dev:backend\" \"npm run dev:frontend\" --names \"BACKEND,FRONTEND\" --prefix-colors \"blue,magenta\"",
+    "dev:backend": "cd backend && npm run dev",
+    "dev:frontend": "cd frontend && npm run dev",
+    "install:all": "npm install && cd backend && npm install && cd ../frontend && npm install",
+    "build": "cd frontend && npm run build"
+  },
+  "keywords": [
+    "education",
+    "AI",
+    "career",
+    "guidance",
+    "fullstack"
+  ],
+  "author": "VisionRoute Team",
+  "license": "MIT",
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
+}

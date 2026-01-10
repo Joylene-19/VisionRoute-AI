@@ -1,0 +1,194 @@
+import html2canvas from "html2canvas";
+import jsPDF from "jspdf";
+
+/**
+ * Export results page as PDF
+ * @param {string} elementId - ID of the HTML element to export
+ * @param {string} fileName - Name of the PDF file
+ */
+export const exportToPDF = async (
+  elementId,
+  fileName = "career-analysis.pdf"
+) => {
+  try {
+    const element = document.getElementById(elementId);
+
+    if (!element) {
+      throw new Error("Element not found for PDF export");
+    }
+
+    // Show loading state
+    const originalHTML = element.innerHTML;
+
+    // Configure html2canvas for better quality
+    const canvas = await html2canvas(element, {
+      scale: 2, // Higher quality
+      useCORS: true,
+      logging: false,
+      backgroundColor: "#ffffff",
+      windowWidth: element.scrollWidth,
+      windowHeight: element.scrollHeight,
+    });
+
+    const imgData = canvas.toDataURL("image/png");
+
+    // Calculate PDF dimensions
+    const imgWidth = 210; // A4 width in mm
+    const pageHeight = 297; // A4 height in mm
+    const imgHeight = (canvas.height * imgWidth) / canvas.width;
+    let heightLeft = imgHeight;
+    let position = 0;
+
+    // Create PDF
+    const pdf = new jsPDF("p", "mm", "a4");
+
+    // Add first page
+    pdf.addImage(imgData, "PNG", 0, position, imgWidth, imgHeight);
+    heightLeft -= pageHeight;
+
+    // Add additional pages if content is longer
+    while (heightLeft > 0) {
+      position = heightLeft - imgHeight;
+      pdf.addPage();
+      pdf.addImage(imgData, "PNG", 0, position, imgWidth, imgHeight);
+      heightLeft -= pageHeight;
+    }
+
+    // Save PDF
+    pdf.save(fileName);
+
+    return { success: true };
+  } catch (error) {
+    console.error("PDF export error:", error);
+    throw new Error("Failed to export PDF");
+  }
+};
+
+/**
+ * Generate PDF with custom formatting and metadata
+ * @param {Object} analysisData - Career analysis data
+ * @param {Object} userData - User data
+ */
+export const generateCareerReportPDF = async (analysisData, userData) => {
+  try {
+    const pdf = new jsPDF("p", "mm", "a4");
+    const pageWidth = pdf.internal.pageSize.getWidth();
+    const pageHeight = pdf.internal.pageSize.getHeight();
+    let yPosition = 20;
+
+    // Header
+    pdf.setFillColor(79, 70, 229); // Indigo
+    pdf.rect(0, 0, pageWidth, 40, "F");
+
+    pdf.setTextColor(255, 255, 255);
+    pdf.setFontSize(24);
+    pdf.text("VisionRoute AI", pageWidth / 2, 20, { align: "center" });
+
+    pdf.setFontSize(14);
+    pdf.text("Career Analysis Report", pageWidth / 2, 30, { align: "center" });
+
+    yPosition = 50;
+    pdf.setTextColor(0, 0, 0);
+
+    // User Info
+    pdf.setFontSize(12);
+    pdf.text(`Name: ${userData.name || "Student"}`, 15, yPosition);
+    yPosition += 8;
+    pdf.text(`Date: ${new Date().toLocaleDateString()}`, 15, yPosition);
+    yPosition += 15;
+
+    // Summary
+    pdf.setFontSize(16);
+    pdf.setFont(undefined, "bold");
+    pdf.text("Career Summary", 15, yPosition);
+    yPosition += 8;
+
+    pdf.setFontSize(11);
+    pdf.setFont(undefined, "normal");
+    const summaryLines = pdf.splitTextToSize(
+      analysisData.summary || "Your career analysis summary",
+      pageWidth - 30
+    );
+    pdf.text(summaryLines, 15, yPosition);
+    yPosition += summaryLines.length * 6 + 10;
+
+    // Recommended Stream
+    if (yPosition > pageHeight - 30) {
+      pdf.addPage();
+      yPosition = 20;
+    }
+
+    pdf.setFontSize(14);
+    pdf.setFont(undefined, "bold");
+    pdf.text("Recommended Stream", 15, yPosition);
+    yPosition += 8;
+
+    pdf.setFontSize(12);
+    pdf.setFont(undefined, "normal");
+    pdf.setTextColor(79, 70, 229);
+    pdf.text(analysisData.recommendedStream || "Not specified", 15, yPosition);
+    pdf.setTextColor(0, 0, 0);
+    yPosition += 15;
+
+    // Career Paths
+    if (analysisData.careerPaths && analysisData.careerPaths.length > 0) {
+      if (yPosition > pageHeight - 50) {
+        pdf.addPage();
+        yPosition = 20;
+      }
+
+      pdf.setFontSize(14);
+      pdf.setFont(undefined, "bold");
+      pdf.text("Top Career Paths", 15, yPosition);
+      yPosition += 10;
+
+      analysisData.careerPaths.slice(0, 3).forEach((career, index) => {
+        if (yPosition > pageHeight - 40) {
+          pdf.addPage();
+          yPosition = 20;
+        }
+
+        pdf.setFontSize(12);
+        pdf.setFont(undefined, "bold");
+        pdf.text(`${index + 1}. ${career.title}`, 15, yPosition);
+        yPosition += 6;
+
+        pdf.setFont(undefined, "normal");
+        pdf.setFontSize(10);
+        const descLines = pdf.splitTextToSize(
+          career.description,
+          pageWidth - 30
+        );
+        pdf.text(descLines, 15, yPosition);
+        yPosition += descLines.length * 5 + 8;
+      });
+    }
+
+    // Footer
+    const totalPages = pdf.internal.pages.length - 1;
+    for (let i = 1; i <= totalPages; i++) {
+      pdf.setPage(i);
+      pdf.setFontSize(8);
+      pdf.setTextColor(128, 128, 128);
+      pdf.text(
+        `Generated by VisionRoute AI - Page ${i} of ${totalPages}`,
+        pageWidth / 2,
+        pageHeight - 10,
+        { align: "center" }
+      );
+    }
+
+    // Save
+    pdf.save(`${userData.name || "Student"}_Career_Analysis.pdf`);
+
+    return { success: true };
+  } catch (error) {
+    console.error("PDF generation error:", error);
+    throw new Error("Failed to generate PDF report");
+  }
+};
+
+export default {
+  exportToPDF,
+  generateCareerReportPDF,
+};
