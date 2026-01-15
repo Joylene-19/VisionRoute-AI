@@ -12,6 +12,11 @@
   body {
     @apply bg-background text-text-primary font-sans;
     font-feature-settings: "rlig" 1, "calt" 1;
+    transition: background-color 0.3s ease, color 0.3s ease;
+  }
+
+  .dark body {
+    @apply bg-dark-background text-gray-100;
   }
 }
 
@@ -43,8 +48,90 @@
     @apply bg-surface rounded-xl shadow-sm border border-border p-6;
   }
 
+  .dark .card {
+    @apply bg-dark-surface border-dark-border;
+  }
+
   .card-hover {
     @apply card hover:shadow-md transition-shadow duration-200;
+  }
+
+  /* Markdown Prose Styles for AI Chat */
+  .prose {
+    @apply max-w-none;
+  }
+
+  .prose h1 {
+    @apply text-2xl font-bold mb-3 text-gray-900 dark:text-white;
+  }
+
+  .prose h2 {
+    @apply text-xl font-bold mb-2 text-gray-900 dark:text-white;
+  }
+
+  .prose h3 {
+    @apply text-lg font-semibold mb-2 text-gray-900 dark:text-white;
+  }
+
+  .prose p {
+    @apply mb-3 text-gray-800 dark:text-gray-200;
+  }
+
+  .prose ul,
+  .prose ol {
+    @apply mb-3 pl-6 space-y-1;
+  }
+
+  .prose ul {
+    @apply list-disc;
+  }
+
+  .prose ol {
+    @apply list-decimal;
+  }
+
+  .prose li {
+    @apply text-gray-800 dark:text-gray-200;
+  }
+
+  .prose strong {
+    @apply font-bold text-gray-900 dark:text-white;
+  }
+
+  .prose em {
+    @apply italic;
+  }
+
+  .prose code {
+    @apply bg-gray-200 dark:bg-gray-700 px-1.5 py-0.5 rounded text-sm font-mono text-gray-900 dark:text-gray-100;
+  }
+
+  .prose pre {
+    @apply bg-gray-100 dark:bg-gray-800 p-4 rounded-lg overflow-x-auto mb-3;
+  }
+
+  .prose pre code {
+    @apply bg-transparent p-0;
+  }
+
+  .prose a {
+    @apply text-indigo-600 dark:text-indigo-400 hover:underline;
+  }
+
+  .prose blockquote {
+    @apply border-l-4 border-gray-300 dark:border-gray-600 pl-4 italic text-gray-700 dark:text-gray-300 mb-3;
+  }
+
+  .prose table {
+    @apply w-full border-collapse mb-3;
+  }
+
+  .prose th {
+    @apply bg-gray-100 dark:bg-gray-800 border border-gray-300 dark:border-gray-600 px-4 py-2 text-left font-semibold;
+  }
+
+  .prose td {
+    @apply border border-gray-300 dark:border-gray-600 px-4 py-2;
   }
 }
 

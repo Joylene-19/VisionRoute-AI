@@ -101,18 +101,18 @@ const QuestionCard = ({
   };
 
   return (
-    <div className="bg-white rounded-lg shadow-md p-6 md:p-8 max-w-3xl mx-auto">
+    <div className="bg-white dark:bg-dark-surface rounded-lg shadow-md p-6 md:p-8 max-w-3xl mx-auto">
       {/* Progress indicator */}
       <div className="mb-6">
-        <div className="flex justify-between text-sm text-gray-600 mb-2">
+        <div className="flex justify-between text-sm text-gray-600 dark:text-gray-300 mb-2">
           <span>
             Question {currentIndex + 1} of {totalQuestions}
           </span>
-          <span className="font-medium text-indigo-600">
+          <span className="font-medium text-indigo-600 dark:text-indigo-400">
             {Math.round(((currentIndex + 1) / totalQuestions) * 100)}% Complete
           </span>
         </div>
-        <div className="w-full bg-gray-200 rounded-full h-2">
+        <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
           <div
             className="bg-indigo-600 h-2 rounded-full transition-all duration-300"
             style={{ width: `${((currentIndex + 1) / totalQuestions) * 100}%` }}
@@ -122,20 +122,20 @@ const QuestionCard = ({
 
       {/* Category badge */}
       <div className="mb-4">
-        <span className="inline-block px-3 py-1 text-xs font-semibold text-indigo-700 bg-indigo-100 rounded-full">
+        <span className="inline-block px-3 py-1 text-xs font-semibold text-indigo-700 dark:text-indigo-300 bg-indigo-100 dark:bg-indigo-900/40 rounded-full">
           {question.category.charAt(0).toUpperCase() +
             question.category.slice(1)}
         </span>
       </div>
 
       {/* Question text */}
-      <h2 className="text-xl md:text-2xl font-bold text-gray-800 mb-6">
+      <h2 className="text-xl md:text-2xl font-bold text-gray-800 dark:text-white mb-6">
         {question.questionText}
       </h2>
 
       {/* Help text */}
       {question.helpText && (
-        <p className="text-sm text-gray-600 mb-6 italic">
+        <p className="text-sm text-gray-600 dark:text-gray-400 mb-6 italic">
           💡 {question.helpText}
         </p>
       )}
@@ -144,14 +144,14 @@ const QuestionCard = ({
       <div className="mb-8">{renderOptions()}</div>
 
       {/* Navigation buttons */}
-      <div className="flex justify-between items-center pt-6 border-t">
+      <div className="flex justify-between items-center pt-6 border-t dark:border-gray-700">
         <button
           onClick={onPrevious}
           disabled={currentIndex === 0}
           className={`px-6 py-2 rounded-md font-medium transition-colors ${
             currentIndex === 0
-              ? "bg-gray-100 text-gray-400 cursor-not-allowed"
-              : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+              ? "bg-gray-100 dark:bg-gray-800 text-gray-400 cursor-not-allowed"
+              : "bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-200 hover:bg-gray-300 dark:hover:bg-gray-600"
           }`}
         >
           ← Previous
@@ -162,7 +162,7 @@ const QuestionCard = ({
           disabled={!value}
           className={`px-6 py-2 rounded-md font-medium transition-colors ${
             !value
-              ? "bg-gray-300 text-gray-500 cursor-not-allowed"
+              ? "bg-gray-300 dark:bg-gray-700 text-gray-500 dark:text-gray-500 cursor-not-allowed"
               : "bg-indigo-600 text-white hover:bg-indigo-700"
           }`}
         >
@@ -172,7 +172,7 @@ const QuestionCard = ({
 
       {/* Required indicator */}
       {question.isRequired && !value && (
-        <p className="text-sm text-gray-500 text-center mt-4">
+        <p className="text-sm text-gray-500 dark:text-gray-400 text-center mt-4">
           * This question is required
         </p>
       )}

@@ -7,6 +7,7 @@ import {
   submitAssessment,
   getMyAssessments,
   getAssessmentById,
+  getAssessmentHistory,
 } from "../controllers/assessmentController.js";
 import { protect } from "../middleware/authMiddleware.js";
 
@@ -23,6 +24,9 @@ router.get("/questions", getQuestions);
 
 // @route   GET /api/assessments/resume
 router.get("/resume", resumeAssessment);
+
+// @route   GET /api/assessments/history
+router.get("/history", getAssessmentHistory);
 
 // @route   GET /api/assessments/my-assessments
 router.get("/my-assessments", getMyAssessments);

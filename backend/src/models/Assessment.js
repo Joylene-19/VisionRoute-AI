@@ -158,6 +158,23 @@ const assessmentSchema = new mongoose.Schema(
 assessmentSchema.index({ user: 1, status: 1 });
 assessmentSchema.index({ createdAt: -1 });
 
+// Virtual getters for frontend compatibility
+assessmentSchema.virtual("answeredQuestions").get(function () {
+  return this.questionsAnswered;
+});
+
+assessmentSchema.virtual("submittedAt").get(function () {
+  return this.completedAt;
+});
+
+assessmentSchema.virtual("timeSpent").get(function () {
+  return this.timeSpentMinutes;
+});
+
+// Ensure virtuals are included in JSON
+assessmentSchema.set("toJSON", { virtuals: true });
+assessmentSchema.set("toObject", { virtuals: true });
+
 // Methods
 assessmentSchema.methods.calculateProgress = function () {
   this.completionPercentage = Math.round(

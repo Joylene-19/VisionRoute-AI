@@ -54,10 +54,10 @@ const AssessmentReports = () => {
   const filteredAssessments = searchTerm
     ? assessments.filter(
         (assessment) =>
-          assessment.userId?.displayName
+          assessment.user?.name
             ?.toLowerCase()
             .includes(searchTerm.toLowerCase()) ||
-          assessment.userId?.email
+          assessment.user?.email
             ?.toLowerCase()
             .includes(searchTerm.toLowerCase())
       )
@@ -93,8 +93,8 @@ const AssessmentReports = () => {
   };
 
   const handleViewReport = (assessmentId) => {
-    // Navigate to results page with assessment ID
-    navigate(`/results?assessmentId=${assessmentId}`);
+    // Navigate to admin assessment view (read-only)
+    navigate(`/admin/assessments/${assessmentId}`);
   };
 
   if (loading) {
@@ -195,16 +195,16 @@ const AssessmentReports = () => {
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="flex items-center">
                         <div className="flex-shrink-0 h-10 w-10">
-                          {assessment.userId?.photoURL ? (
+                          {assessment.user?.profilePhoto ? (
                             <img
                               className="h-10 w-10 rounded-full"
-                              src={assessment.userId.photoURL}
+                              src={assessment.user.profilePhoto}
                               alt=""
                             />
                           ) : (
                             <div className="h-10 w-10 rounded-full bg-indigo-600 flex items-center justify-center">
                               <span className="text-white font-medium text-sm">
-                                {assessment.userId?.displayName
+                                {assessment.user?.name
                                   ?.charAt(0)
                                   ?.toUpperCase() || "U"}
                               </span>
@@ -213,10 +213,10 @@ const AssessmentReports = () => {
                         </div>
                         <div className="ml-4">
                           <div className="text-sm font-medium text-gray-900">
-                            {assessment.userId?.displayName || "Unknown User"}
+                            {assessment.user?.name || "Unknown User"}
                           </div>
                           <div className="text-sm text-gray-500">
-                            {assessment.userId?.email || "N/A"}
+                            {assessment.user?.email || "N/A"}
                           </div>
                         </div>
                       </div>

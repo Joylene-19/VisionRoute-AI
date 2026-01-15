@@ -265,10 +265,12 @@ export const getAllAssessments = async (req, res, next) => {
 
     // Get assessments with pagination
     const assessments = await Assessment.find(query)
-      .populate("user", "name email")
+      .populate("user", "name email profilePhoto")
       .sort({ [sortBy]: order === "desc" ? -1 : 1 })
       .limit(parseInt(limit))
       .skip((parseInt(page) - 1) * parseInt(limit));
+
+    console.log("📊 Sample assessment user data:", assessments[0]?.user);
 
     res.status(200).json({
       success: true,
@@ -276,8 +278,8 @@ export const getAllAssessments = async (req, res, next) => {
         assessments,
         pagination: {
           total,
-          page: parseInt(page),
-          pages: Math.ceil(total / parseInt(limit)),
+          currentPage: parseInt(page),
+          totalPages: Math.ceil(total / parseInt(limit)),
           limit: parseInt(limit),
         },
       },
@@ -287,6 +289,44 @@ export const getAllAssessments = async (req, res, next) => {
     res.status(500).json({
       success: false,
       message: "Failed to fetch assessments",
+      error: error.message,
+    });
+  }
+};
+
+/**
+ * @desc    Get assessment by ID (admin can view any assessment)
+ * @route   GET /api/admin/assessments/:id
+ * @access  Private/Admin
+ */
+export const getAssessmentById = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    console.log("🔍 Fetching assessment with ID:", id);
+
+    const assessment = await Assessment.findById(id)
+      .populate("user", "name email profilePhoto currentGrade phone")
+      .lean();
+
+    console.log("📋 Found assessment:", assessment ? "Yes" : "No");
+    console.log("👤 User data:", assessment?.user);
+
+    if (!assessment) {
+      return res.status(404).json({
+        success: false,
+        message: "Assessment not found",
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      data: assessment,
+    });
+  } catch (error) {
+    console.error("Get assessment by ID error:", error);
+    res.status(500).json({
+      success: false,
+      message: "Failed to fetch assessment",
       error: error.message,
     });
   }
@@ -419,6 +459,229 @@ export const deleteQuestion = async (req, res, next) => {
   }
 };
 
+/**
+ * @desc    Get analytics data for charts
+ * @route   GET /api/admin/analytics
+ * @access  Private/Admin
+ */
+export const getAnalyticsData = async (req, res, next) => {
+  try {
+    const { days = 30 } = req.query;
+    const daysAgo = new Date();
+    daysAgo.setDate(daysAgo.getDate() - parseInt(days));
+
+    // User growth data
+    const userGrowthData = await User.aggregate([
+      {
+        $match: {
+          createdAt: { $gte: daysAgo },
+        },
+      },
+      {
+        $group: {
+          _id: {
+            $dateToString: { format: "%Y-%m-%d", date: "$createdAt" },
+          },
+          users: { $sum: 1 },
+        },
+      },
+      {
+        $sort: { _id: 1 },
+      },
+    ]);
+
+    // Assessment growth data
+    const assessmentGrowthData = await Assessment.aggregate([
+      {
+        $match: {
+          createdAt: { $gte: daysAgo },
+        },
+      },
+      {
+        $group: {
+          _id: {
+            $dateToString: { format: "%Y-%m-%d", date: "$createdAt" },
+          },
+          assessments: { $sum: 1 },
+        },
+      },
+      {
+        $sort: { _id: 1 },
+      },
+    ]);
+
+    // Combine user and assessment growth
+    const dateMap = new Map();
+    userGrowthData.forEach((item) => {
+      dateMap.set(item._id, {
+        date: item._id,
+        users: item.users,
+        assessments: 0,
+      });
+    });
+    assessmentGrowthData.forEach((item) => {
+      const existing = dateMap.get(item._id) || {
+        date: item._id,
+        users: 0,
+        assessments: 0,
+      };
+      existing.assessments = item.assessments;
+      dateMap.set(item._id, existing);
+    });
+    const userGrowth = Array.from(dateMap.values()).map((item) => ({
+      date: new Date(item.date).toLocaleDateString("en-US", {
+        month: "short",
+        day: "numeric",
+      }),
+      users: item.users,
+      assessments: item.assessments,
+    }));
+
+    // Assessment status distribution
+    const totalAssessments = await Assessment.countDocuments();
+    const completedCount = await Assessment.countDocuments({
+      status: "completed",
+    });
+    const inProgressCount = await Assessment.countDocuments({
+      status: "in-progress",
+    });
+    const totalUsers = await User.countDocuments();
+    const notStartedCount = Math.max(0, totalUsers - totalAssessments);
+
+    const assessmentStatus = [
+      { name: "Completed", value: completedCount, color: "#10b981" },
+      { name: "In Progress", value: inProgressCount, color: "#f59e0b" },
+      { name: "Not Started", value: notStartedCount, color: "#6b7280" },
+    ];
+
+    // Top career matches (from completed assessments)
+    const completedAssessments = await Assessment.find({ status: "completed" })
+      .select("careerRecommendations")
+      .lean();
+
+    const careerCounts = {};
+    completedAssessments.forEach((assessment) => {
+      if (
+        assessment.careerRecommendations &&
+        Array.isArray(assessment.careerRecommendations)
+      ) {
+        assessment.careerRecommendations.slice(0, 3).forEach((career) => {
+          const careerName =
+            typeof career === "string" ? career : career.title || career.name;
+          if (careerName) {
+            careerCounts[careerName] = (careerCounts[careerName] || 0) + 1;
+          }
+        });
+      }
+    });
+
+    const topCareers = Object.entries(careerCounts)
+      .map(([career, count]) => ({ career, count }))
+      .sort((a, b) => b.count - a.count)
+      .slice(0, 5);
+
+    // RIASEC score distribution
+    const riasecStats = await Assessment.aggregate([
+      { $match: { status: "completed", "scores.interest": { $exists: true } } },
+      {
+        $group: {
+          _id: null,
+          realistic: { $avg: "$scores.interest.realistic" },
+          investigative: { $avg: "$scores.interest.investigative" },
+          artistic: { $avg: "$scores.interest.artistic" },
+          social: { $avg: "$scores.interest.social" },
+          enterprising: { $avg: "$scores.interest.enterprising" },
+          conventional: { $avg: "$scores.interest.conventional" },
+        },
+      },
+    ]);
+
+    const riasecDistribution =
+      riasecStats.length > 0
+        ? [
+            {
+              dimension: "Realistic",
+              average: Math.round(riasecStats[0].realistic || 0),
+            },
+            {
+              dimension: "Investigative",
+              average: Math.round(riasecStats[0].investigative || 0),
+            },
+            {
+              dimension: "Artistic",
+              average: Math.round(riasecStats[0].artistic || 0),
+            },
+            {
+              dimension: "Social",
+              average: Math.round(riasecStats[0].social || 0),
+            },
+            {
+              dimension: "Enterprising",
+              average: Math.round(riasecStats[0].enterprising || 0),
+            },
+            {
+              dimension: "Conventional",
+              average: Math.round(riasecStats[0].conventional || 0),
+            },
+          ]
+        : [];
+
+    // Aptitude score averages
+    const aptitudeStats = await Assessment.aggregate([
+      { $match: { status: "completed", "scores.aptitude": { $exists: true } } },
+      {
+        $group: {
+          _id: null,
+          logical: { $avg: "$scores.aptitude.logical" },
+          numerical: { $avg: "$scores.aptitude.numerical" },
+          verbal: { $avg: "$scores.aptitude.verbal" },
+          spatial: { $avg: "$scores.aptitude.spatial" },
+        },
+      },
+    ]);
+
+    const aptitudeAverages =
+      aptitudeStats.length > 0
+        ? [
+            {
+              skill: "Logical",
+              average: Math.round(aptitudeStats[0].logical || 0),
+            },
+            {
+              skill: "Numerical",
+              average: Math.round(aptitudeStats[0].numerical || 0),
+            },
+            {
+              skill: "Verbal",
+              average: Math.round(aptitudeStats[0].verbal || 0),
+            },
+            {
+              skill: "Spatial",
+              average: Math.round(aptitudeStats[0].spatial || 0),
+            },
+          ]
+        : [];
+
+    res.status(200).json({
+      success: true,
+      data: {
+        userGrowth,
+        assessmentStatus,
+        topCareers,
+        riasecDistribution,
+        aptitudeAverages,
+      },
+    });
+  } catch (error) {
+    console.error("Get analytics data error:", error);
+    res.status(500).json({
+      success: false,
+      message: "Failed to fetch analytics data",
+      error: error.message,
+    });
+  }
+};
+
 export default {
   getDashboardStats,
   getAllUsers,
@@ -426,8 +689,10 @@ export default {
   updateUserRole,
   deleteUser,
   getAllAssessments,
+  getAssessmentById,
   getAllQuestions,
   createQuestion,
   updateQuestion,
   deleteQuestion,
+  getAnalyticsData,
 };

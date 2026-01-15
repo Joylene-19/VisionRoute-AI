@@ -13,14 +13,20 @@ import Home from "./pages/Home";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Profile from "./pages/Profile";
+import UserDashboard from "./pages/UserDashboard";
 import Assessment from "./pages/Assessment";
 import Results from "./pages/Results";
 import ForgotPassword from "./pages/ForgotPassword";
+import AssessmentHistory from "./pages/AssessmentHistory";
+import Bookmarks from "./pages/Bookmarks";
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import UserManagement from "./pages/admin/UserManagement";
 import QuestionManagement from "./pages/admin/QuestionManagement";
 import AssessmentReports from "./pages/admin/AssessmentReports";
+import AssessmentDetail from "./pages/admin/AssessmentDetail";
 import Analytics from "./pages/admin/Analytics";
+import Settings from "./pages/admin/Settings";
+import CareerChatbot from "./pages/CareerChatbot";
 
 function App() {
   return (
@@ -66,6 +72,14 @@ function App() {
 
           {/* Protected Routes */}
           <Route
+            path="/dashboard"
+            element={
+              <ProtectedRoute>
+                <UserDashboard />
+              </ProtectedRoute>
+            }
+          />
+          <Route
             path="/profile"
             element={
               <ProtectedRoute>
@@ -90,6 +104,44 @@ function App() {
             element={
               <ProtectedRoute>
                 <Results />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/results/:id"
+            element={
+              <ProtectedRoute>
+                <Results />
+              </ProtectedRoute>
+            }
+          />
+
+          {/* Assessment History - Module 6 Phase 4 */}
+          <Route
+            path="/history"
+            element={
+              <ProtectedRoute>
+                <AssessmentHistory />
+              </ProtectedRoute>
+            }
+          />
+
+          {/* Bookmarks - Module 6 Phase 4 */}
+          <Route
+            path="/bookmarks"
+            element={
+              <ProtectedRoute>
+                <Bookmarks />
+              </ProtectedRoute>
+            }
+          />
+
+          {/* AI Career Chatbot - Module 6 Phase 2 */}
+          <Route
+            path="/ai-chat"
+            element={
+              <ProtectedRoute>
+                <CareerChatbot />
               </ProtectedRoute>
             }
           />
@@ -136,11 +188,31 @@ function App() {
             }
           />
           <Route
+            path="/admin/assessments/:id"
+            element={
+              <AdminRoute>
+                <AdminLayout>
+                  <AssessmentDetail />
+                </AdminLayout>
+              </AdminRoute>
+            }
+          />
+          <Route
             path="/admin/analytics"
             element={
               <AdminRoute>
                 <AdminLayout>
                   <Analytics />
+                </AdminLayout>
+              </AdminRoute>
+            }
+          />
+          <Route
+            path="/admin/settings"
+            element={
+              <AdminRoute>
+                <AdminLayout>
+                  <Settings />
                 </AdminLayout>
               </AdminRoute>
             }

@@ -192,10 +192,12 @@ const Assessment = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
+      <div className="min-h-screen bg-background dark:bg-dark-background flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-indigo-600 mx-auto"></div>
-          <p className="mt-4 text-gray-600">Loading assessment...</p>
+          <p className="mt-4 text-gray-600 dark:text-gray-300">
+            Loading assessment...
+          </p>
         </div>
       </div>
     );
@@ -203,12 +205,14 @@ const Assessment = () => {
 
   if (!questions.length) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
+      <div className="min-h-screen bg-background dark:bg-dark-background flex items-center justify-center">
         <div className="text-center">
-          <h2 className="text-2xl font-bold text-gray-800">
+          <h2 className="text-2xl font-bold text-gray-800 dark:text-white">
             No questions available
           </h2>
-          <p className="text-gray-600 mt-2">Please contact support.</p>
+          <p className="text-gray-600 dark:text-gray-400 mt-2">
+            Please contact support.
+          </p>
         </div>
       </div>
     );
@@ -217,14 +221,14 @@ const Assessment = () => {
   const currentQuestion = questions[currentIndex];
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8 px-4">
+    <div className="min-h-screen bg-gray-50 dark:bg-dark-background py-8 px-4">
       <div className="max-w-4xl mx-auto">
         {/* Header */}
         <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-gray-800">
+          <h1 className="text-3xl font-bold text-gray-800 dark:text-white">
             Stream Guidance Assessment
           </h1>
-          <p className="text-gray-600 mt-2">
+          <p className="text-gray-600 dark:text-gray-300 mt-2">
             Answer honestly for the most accurate recommendations
           </p>
 
@@ -252,9 +256,9 @@ const Assessment = () => {
         {/* Submit overlay */}
         {submitting && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-            <div className="bg-white rounded-lg p-8 text-center">
+            <div className="bg-white dark:bg-dark-surface rounded-lg p-8 text-center">
               <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-indigo-600 mx-auto"></div>
-              <p className="mt-4 text-gray-700 font-medium">
+              <p className="mt-4 text-gray-700 dark:text-white font-medium">
                 Submitting assessment...
               </p>
             </div>

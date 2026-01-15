@@ -12,6 +12,10 @@ import {
 } from "recharts";
 
 const AptitudeBarChart = ({ scores }) => {
+  console.log("📊 AptitudeBarChart received scores:", scores);
+  console.log("📊 AptitudeBarChart scores.numerical:", scores?.numerical);
+  console.log("📊 AptitudeBarChart Object.keys:", Object.keys(scores || {}));
+
   // Prepare data for bar chart
   const data = [
     {
@@ -109,7 +113,11 @@ AptitudeBarChart.propTypes = {
     verbal: PropTypes.number,
     logical: PropTypes.number,
     spatial: PropTypes.number,
-  }).isRequired,
+  }),
+};
+
+AptitudeBarChart.defaultProps = {
+  scores: {},
 };
 
 export default AptitudeBarChart;

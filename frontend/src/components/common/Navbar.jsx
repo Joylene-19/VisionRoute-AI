@@ -1,8 +1,18 @@
 import { Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import { LogOut, User, Home as HomeIcon, ShieldCheck } from "lucide-react";
+import {
+  LogOut,
+  User,
+  Home as HomeIcon,
+  ShieldCheck,
+  LayoutDashboard,
+  Clock as ClockIcon,
+  Bookmark as BookmarkIcon,
+} from "lucide-react";
 import useAuthStore from "../../store/authStore";
 import toast from "react-hot-toast";
+import DarkModeToggle from "./DarkModeToggle";
+import NotificationCenter from "./NotificationCenter";
 
 const Navbar = () => {
   const navigate = useNavigate();
@@ -15,7 +25,7 @@ const Navbar = () => {
   };
 
   return (
-    <nav className="bg-surface border-b border-border sticky top-0 z-50 shadow-sm">
+    <nav className="bg-surface dark:bg-dark-surface border-b border-border dark:border-dark-border sticky top-0 z-50 shadow-sm transition-colors duration-300">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
@@ -30,8 +40,47 @@ const Navbar = () => {
 
           {/* Nav Items */}
           <div className="flex items-center space-x-4">
+            {/* Dark Mode Toggle - Always visible */}
+            <DarkModeToggle />
+
             {isAuthenticated ? (
               <>
+                {/* Dashboard Link */}
+                <Link
+                  to="/dashboard"
+                  className="flex items-center space-x-2 px-4 py-2 rounded-lg hover:bg-background transition-colors"
+                >
+                  <LayoutDashboard className="w-5 h-5 text-text-secondary" />
+                  <span className="text-sm font-medium text-text-primary hidden sm:inline">
+                    Dashboard
+                  </span>
+                </Link>
+
+                {/* Assessment History Link */}
+                <Link
+                  to="/history"
+                  className="flex items-center space-x-2 px-4 py-2 rounded-lg hover:bg-background transition-colors"
+                >
+                  <ClockIcon className="w-5 h-5 text-text-secondary" />
+                  <span className="text-sm font-medium text-text-primary hidden sm:inline">
+                    History
+                  </span>
+                </Link>
+
+                {/* Bookmarks Link */}
+                <Link
+                  to="/bookmarks"
+                  className="flex items-center space-x-2 px-4 py-2 rounded-lg hover:bg-background transition-colors"
+                >
+                  <BookmarkIcon className="w-5 h-5 text-text-secondary" />
+                  <span className="text-sm font-medium text-text-primary hidden sm:inline">
+                    Bookmarks
+                  </span>
+                </Link>
+
+                {/* Notification Center */}
+                <NotificationCenter />
+
                 {/* Admin Panel Link - Only show for admin users */}
                 {user?.role === "admin" && (
                   <Link

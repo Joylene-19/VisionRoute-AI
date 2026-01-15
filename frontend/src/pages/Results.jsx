@@ -1,32 +1,28 @@
 import { useState, useEffect } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import api from "../services/api";
 import toast from "react-hot-toast";
 import RIASECRadarChart from "../components/charts/RIASECRadarChart";
 import AptitudeBarChart from "../components/charts/AptitudeBarChart";
 import { generateCareerReportPDF } from "../utils/pdfExport";
 import useAuthStore from "../store/authStore";
+import { BookmarkIcon as BookmarkOutlineIcon } from "@heroicons/react/24/outline";
+import { BookmarkIcon as BookmarkSolidIcon } from "@heroicons/react/24/solid";
 
 const Results = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const { user } = useAuthStore();
+  const { id } = useParams(); // Get ID from URL params
+  const { user, token } = useAuthStore();
   const [loading, setLoading] = useState(true);
   const [generating, setGenerating] = useState(false);
   const [exportingPDF, setExportingPDF] = useState(false);
   const [analysis, setAnalysis] = useState(null);
   const [scores, setScores] = useState(null);
-  const assessmentId = location.state?.assessmentId;
+  const [bookmarkedCareers, setBookmarkedCareers] = useState(new Set());
 
-  useEffect(() => {
-    if (!assessmentId) {
-      toast.error("No assessment found");
-      navigate("/assessment");
-      return;
-    }
-
-    loadResults();
-  }, [assessmentId]);
+  // Get assessment ID from either URL params or location state
+  const assessmentId = id || location.state?.assessmentId;
 
   const loadResults = async () => {
     try {
@@ -51,6 +47,65 @@ const Results = () => {
       setLoading(false);
     }
   };
+
+  const handleToggleBookmark = async (career) => {
+    const isBookmarked = bookmarkedCareers.has(career.title);
+
+    try {
+      if (isBookmarked) {
+        // Remove bookmark
+        await api.delete(
+          `/api/bookmarks/career/${encodeURIComponent(career.title)}`
+        );
+        setBookmarkedCareers((prev) => {
+          const newSet = new Set(prev);
+          newSet.delete(career.title);
+          return newSet;
+        });
+        toast.success("Bookmark removed");
+      } else {
+        // Add bookmark
+        // Parse matchScore - handle both number (95) and string ("95%") formats
+        let matchPercentage = career.matchScore;
+        if (typeof matchPercentage === "string") {
+          matchPercentage = parseInt(matchPercentage.replace("%", ""));
+        }
+
+        await api.post("/api/bookmarks", {
+          careerTitle: career.title,
+          careerDescription: career.description,
+          matchPercentage: matchPercentage || 0,
+          category: career.category || "General",
+        });
+        setBookmarkedCareers((prev) => new Set([...prev, career.title]));
+        toast.success("Career bookmarked!");
+      }
+    } catch (error) {
+      console.error("Bookmark error:", error);
+      toast.error(
+        isBookmarked ? "Failed to remove bookmark" : "Failed to add bookmark"
+      );
+    }
+  };
+
+  const loadBookmarks = async () => {
+    try {
+      const response = await api.get("/api/bookmarks");
+      if (response.success) {
+        const titles = new Set(response.data.map((b) => b.careerTitle));
+        setBookmarkedCareers(titles);
+      }
+    } catch (error) {
+      console.error("Failed to load bookmarks:", error);
+    }
+  };
+
+  useEffect(() => {
+    if (assessmentId) {
+      loadResults();
+      loadBookmarks();
+    }
+  }, [assessmentId]);
 
   const generateAnalysis = async () => {
     try {
@@ -80,14 +135,44 @@ const Results = () => {
       setExportingPDF(true);
       toast.loading("Generating PDF...", { id: "pdf" });
 
-      await generateCareerReportPDF(analysis, {
-        name: user?.displayName || user?.email || "Student",
-      });
+      // Call backend API to generate PDF
+      const response = await fetch(
+        `http://localhost:5000/api/pdf/assessment/${assessmentId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      if (!response.ok) {
+        const errorData = await response
+          .json()
+          .catch(() => ({ message: "Unknown error" }));
+        throw new Error(
+          errorData.message || `HTTP ${response.status}: ${response.statusText}`
+        );
+      }
+
+      // Convert response to blob
+      const blob = await response.blob();
+
+      // Create download link
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = `VisionRoute_Report_${
+        user?.displayName || "Student"
+      }.pdf`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(url);
 
       toast.success("PDF downloaded successfully!", { id: "pdf" });
     } catch (error) {
-      toast.error("Failed to export PDF", { id: "pdf" });
-      console.error(error);
+      console.error("PDF Download Error:", error);
+      toast.error(`Failed to export PDF: ${error.message}`, { id: "pdf" });
     } finally {
       setExportingPDF(false);
     }
@@ -330,14 +415,33 @@ const Results = () => {
                   className="border border-gray-200 rounded-lg p-5 hover:shadow-md transition-shadow"
                 >
                   <div className="flex justify-between items-start mb-2">
-                    <h4 className="text-lg font-bold text-gray-800">
-                      {career.title}
-                    </h4>
-                    {career.matchScore && (
-                      <span className="bg-green-100 text-green-700 px-3 py-1 rounded-full text-sm font-semibold">
-                        {career.matchScore}
-                      </span>
-                    )}
+                    <div className="flex-1">
+                      <h4 className="text-lg font-bold text-gray-800">
+                        {career.title}
+                      </h4>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      {career.matchScore && (
+                        <span className="bg-green-100 text-green-700 px-3 py-1 rounded-full text-sm font-semibold">
+                          {career.matchScore}
+                        </span>
+                      )}
+                      <button
+                        onClick={() => handleToggleBookmark(career)}
+                        className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+                        title={
+                          bookmarkedCareers.has(career.title)
+                            ? "Remove bookmark"
+                            : "Bookmark this career"
+                        }
+                      >
+                        {bookmarkedCareers.has(career.title) ? (
+                          <BookmarkSolidIcon className="w-6 h-6 text-indigo-600" />
+                        ) : (
+                          <BookmarkOutlineIcon className="w-6 h-6 text-gray-400 hover:text-indigo-600" />
+                        )}
+                      </button>
+                    </div>
                   </div>
                   <p className="text-gray-600 mb-3">{career.description}</p>
                   <div className="grid md:grid-cols-3 gap-4 text-sm">

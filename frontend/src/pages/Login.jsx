@@ -80,7 +80,7 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-primary/10 via-background to-secondary/10 flex items-center justify-center px-4 py-12">
+    <div className="min-h-screen bg-gradient-to-br from-primary/10 via-background to-secondary/10 dark:from-gray-900 dark:via-dark-background dark:to-gray-800 flex items-center justify-center px-4 py-12">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -99,10 +99,10 @@ const Login = () => {
               <LogIn className="w-8 h-8 text-white" />
             </div>
           </motion.div>
-          <h1 className="text-3xl font-bold text-text-primary mb-2">
+          <h1 className="text-3xl font-bold text-text-primary dark:text-white mb-2">
             Welcome Back
           </h1>
-          <p className="text-text-secondary">
+          <p className="text-text-secondary dark:text-gray-400">
             Sign in to continue your journey
           </p>
         </div>
@@ -119,7 +119,7 @@ const Login = () => {
             <div>
               <label
                 htmlFor="email"
-                className="block text-sm font-medium text-text-primary mb-2"
+                className="block text-sm font-medium text-text-primary dark:text-white mb-2"
               >
                 Email Address
               </label>
@@ -146,7 +146,7 @@ const Login = () => {
             <div>
               <label
                 htmlFor="password"
-                className="block text-sm font-medium text-text-primary mb-2"
+                className="block text-sm font-medium text-text-primary dark:text-white mb-2"
               >
                 Password
               </label>

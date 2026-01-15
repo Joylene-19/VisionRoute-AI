@@ -1,6 +1,7 @@
 import User from "../models/User.js";
 import { generateToken } from "../middleware/authMiddleware.js";
 import { ErrorResponse } from "../middleware/errorHandler.js";
+import { sendWelcomeEmail } from "../services/emailService.js";
 
 /**
  * @desc    Register a new user
@@ -36,6 +37,12 @@ export const register = async (req, res, next) => {
 
     // Generate token
     const token = generateToken(user._id);
+
+    // Send welcome email (async, don't wait for it)
+    sendWelcomeEmail(user).catch((error) => {
+      console.error("Failed to send welcome email:", error);
+      // Don't fail registration if email fails
+    });
 
     res.status(201).json({
       success: true,

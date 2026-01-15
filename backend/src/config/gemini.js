@@ -18,9 +18,9 @@ const initializeGemini = () => {
 
     genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
-    // Use Gemini Pro model (stable, reliable)
+    // Use Gemini 1.5 Flash (free tier model)
     model = genAI.getGenerativeModel({
-      model: "gemini-pro",
+      model: "gemini-1.5-flash",
       generationConfig: {
         temperature: 0.7,
         topP: 0.8,
@@ -29,7 +29,7 @@ const initializeGemini = () => {
       },
     });
 
-    console.log(" Google Gemini AI initialized (gemini-pro)");
+    console.log("✅ Google Gemini AI initialized (gemini-1.5-flash)");
     return model;
   } catch (error) {
     console.error(" Gemini initialization error:", error.message);

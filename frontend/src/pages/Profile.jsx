@@ -105,7 +105,7 @@ const Profile = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background py-12 px-4">
+    <div className="min-h-screen bg-background dark:bg-dark-background py-12 px-4">
       <div className="max-w-4xl mx-auto">
         {/* Header */}
         <motion.div
@@ -113,10 +113,12 @@ const Profile = () => {
           animate={{ opacity: 1, y: 0 }}
           className="text-center mb-8"
         >
-          <h1 className="text-4xl font-bold text-text-primary mb-2">
+          <h1 className="text-4xl font-bold text-text-primary dark:text-white mb-2">
             My Profile
           </h1>
-          <p className="text-text-secondary">Manage your account information</p>
+          <p className="text-text-secondary dark:text-gray-300">
+            Manage your account information
+          </p>
         </motion.div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -142,31 +144,39 @@ const Profile = () => {
               )}
             </div>
 
-            <h2 className="text-2xl font-bold text-text-primary mb-1">
+            <h2 className="text-2xl font-bold text-text-primary dark:text-white mb-1">
               {user?.name}
             </h2>
-            <p className="text-text-secondary mb-4">{user?.email}</p>
+            <p className="text-text-secondary dark:text-gray-300 mb-4">
+              {user?.email}
+            </p>
 
             {/* Stats */}
-            <div className="grid grid-cols-2 gap-4 mt-6 pt-6 border-t border-border">
+            <div className="grid grid-cols-2 gap-4 mt-6 pt-6 border-t border-border dark:border-gray-700">
               <div>
                 <div className="text-2xl font-bold text-primary">
                   {user?.completedAssessments || 0}
                 </div>
-                <div className="text-sm text-text-secondary">Assessments</div>
+                <div className="text-sm text-text-secondary dark:text-gray-400">
+                  Assessments
+                </div>
               </div>
               <div>
                 <div className="text-2xl font-bold text-success">
                   {user?.loginCount || 0}
                 </div>
-                <div className="text-sm text-text-secondary">Logins</div>
+                <div className="text-sm text-text-secondary dark:text-gray-400">
+                  Logins
+                </div>
               </div>
             </div>
 
             {/* Member Since */}
-            <div className="mt-6 pt-6 border-t border-border">
-              <div className="text-sm text-text-secondary">Member since</div>
-              <div className="text-text-primary font-medium">
+            <div className="mt-6 pt-6 border-t border-border dark:border-gray-700">
+              <div className="text-sm text-text-secondary dark:text-gray-400">
+                Member since
+              </div>
+              <div className="text-text-primary dark:text-white font-medium">
                 {new Date(user?.createdAt).toLocaleDateString("en-IN", {
                   month: "long",
                   year: "numeric",
@@ -184,7 +194,7 @@ const Profile = () => {
           >
             {/* Header with Edit Button */}
             <div className="flex justify-between items-center mb-6">
-              <h3 className="text-2xl font-bold text-text-primary">
+              <h3 className="text-2xl font-bold text-text-primary dark:text-white">
                 Personal Information
               </h3>
               {!isEditing ? (

@@ -13,6 +13,11 @@ import authRoutes from "./routes/authRoutes.js";
 import adminRoutes from "./routes/adminRoutes.js";
 import assessmentRoutes from "./routes/assessmentRoutes.js";
 import analysisRoutes from "./routes/analysisRoutes.js";
+import userRoutes from "./routes/userRoutes.js";
+import notificationRoutes from "./routes/notificationRoutes.js";
+import aiRoutes from "./routes/aiRoutes.js";
+import pdfRoutes from "./routes/pdfRoutes.js";
+import bookmarkRoutes from "./routes/bookmarkRoutes.js";
 
 // Initialize Express app
 const app = express();
@@ -59,6 +64,11 @@ app.use("/api/auth", authRoutes);
 app.use("/api/admin", adminRoutes);
 app.use("/api/assessments", assessmentRoutes);
 app.use("/api/analysis", analysisRoutes);
+app.use("/api/user", userRoutes);
+app.use("/api/notifications", notificationRoutes);
+app.use("/api/ai", aiRoutes);
+app.use("/api/pdf", pdfRoutes);
+app.use("/api/bookmarks", bookmarkRoutes);
 
 // 404 handler
 app.use((req, res) => {

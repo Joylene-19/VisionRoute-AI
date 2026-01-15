@@ -11,6 +11,10 @@ import {
 } from "recharts";
 
 const RIASECRadarChart = ({ scores }) => {
+  console.log("📊 RIASECRadarChart received scores:", scores);
+  console.log("📊 RIASECRadarChart scores.realistic:", scores?.realistic);
+  console.log("📊 RIASECRadarChart Object.keys:", Object.keys(scores || {}));
+
   // Prepare data for radar chart
   const data = [
     {
@@ -112,7 +116,11 @@ RIASECRadarChart.propTypes = {
     social: PropTypes.number,
     enterprising: PropTypes.number,
     conventional: PropTypes.number,
-  }).isRequired,
+  }),
+};
+
+RIASECRadarChart.defaultProps = {
+  scores: {},
 };
 
 export default RIASECRadarChart;

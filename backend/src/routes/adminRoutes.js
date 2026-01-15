@@ -6,10 +6,12 @@ import {
   updateUserRole,
   deleteUser,
   getAllAssessments,
+  getAssessmentById,
   getAllQuestions,
   createQuestion,
   updateQuestion,
   deleteQuestion,
+  getAnalyticsData,
 } from "../controllers/adminController.js";
 import { protect, adminOnly } from "../middleware/authMiddleware.js";
 
@@ -22,6 +24,9 @@ router.use(adminOnly);
 // Dashboard
 router.get("/dashboard/stats", getDashboardStats);
 
+// Analytics
+router.get("/analytics", getAnalyticsData);
+
 // User Management
 router.get("/users", getAllUsers);
 router.get("/users/:id", getUserById);
@@ -30,6 +35,7 @@ router.delete("/users/:id", deleteUser);
 
 // Assessment Management
 router.get("/assessments", getAllAssessments);
+router.get("/assessments/:id", getAssessmentById);
 
 // Question Management
 router.get("/questions", getAllQuestions);
