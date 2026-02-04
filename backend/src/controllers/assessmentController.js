@@ -2,6 +2,7 @@ import Assessment from "../models/Assessment.js";
 import Question from "../models/Question.js";
 import { sendAssessmentCompleteEmail } from "../services/emailService.js";
 import { generateAssessmentPDF } from "../services/pdfService.js";
+import { sendAssessmentCompleteNotification } from "../services/notificationService.js";
 
 // @desc    Start a new assessment
 // @route   POST /api/assessments/start
@@ -253,6 +254,22 @@ export const submitAssessment = async (req, res, next) => {
     assessment.completionPercentage = 100;
 
     await assessment.save();
+
+    // Count career recommendations
+    const careerCount = generateCareerMatchesForEmail(
+      Object.entries(assessment.scores.interest || {}).sort(
+        (a, b) => b[1] - a[1]
+      )[0]?.[0] || "investigative"
+    ).length;
+
+    // Create notification for assessment completion (async, don't wait)
+    sendAssessmentCompleteNotification(
+      userId,
+      assessment._id.toString(),
+      careerCount
+    ).catch((err) =>
+      console.error("Failed to create assessment notification:", err)
+    );
 
     // Generate PDF and send assessment completion email (async, don't wait)
     (async () => {

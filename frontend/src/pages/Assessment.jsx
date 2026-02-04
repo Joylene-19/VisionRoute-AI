@@ -192,10 +192,10 @@ const Assessment = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-background dark:bg-dark-background flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-soft dark:bg-dark-background flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-indigo-600 mx-auto"></div>
-          <p className="mt-4 text-gray-600 dark:text-gray-300">
+          <div className="animate-spin rounded-full h-16 w-16 border-b-4 border-blue-600 mx-auto"></div>
+          <p className="mt-4 text-gray-600 dark:text-gray-300 font-medium">
             Loading assessment...
           </p>
         </div>
@@ -220,23 +220,46 @@ const Assessment = () => {
 
   const currentQuestion = questions[currentIndex];
 
+  const progressPercentage = ((currentIndex + 1) / questions.length) * 100;
+
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-dark-background py-8 px-4">
+    <div className="min-h-screen bg-gradient-soft dark:bg-dark-background py-8 px-4">
       <div className="max-w-4xl mx-auto">
         {/* Header */}
         <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-gray-800 dark:text-white">
+          <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
             Stream Guidance Assessment
           </h1>
-          <p className="text-gray-600 dark:text-gray-300 mt-2">
+          <p className="text-gray-600 dark:text-gray-300 mt-2 text-lg">
             Answer honestly for the most accurate recommendations
           </p>
 
+          {/* Progress Bar */}
+          <div className="mt-6 max-w-2xl mx-auto">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-sm font-semibold text-gray-700 dark:text-gray-300">
+                Question {currentIndex + 1} of {questions.length}
+              </span>
+              <span className="text-sm font-semibold text-blue-600 dark:text-blue-400">
+                {Math.round(progressPercentage)}% Complete
+              </span>
+            </div>
+            <div className="h-3 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden shadow-inner">
+              <div
+                className="h-full bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 rounded-full transition-all duration-500 shadow-lg"
+                style={{ width: `${progressPercentage}%` }}
+              />
+            </div>
+          </div>
+
           {/* Auto-save indicator */}
           {lastSaved && (
-            <p className="text-sm text-green-600 mt-2">
-              ✓ Auto-saved at {lastSaved.toLocaleTimeString()}
-            </p>
+            <div className="mt-4 inline-flex items-center gap-2 px-4 py-2 bg-green-50 dark:bg-green-900/20 rounded-lg">
+              <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+              <p className="text-sm text-green-700 dark:text-green-400 font-medium">
+                Auto-saved at {lastSaved.toLocaleTimeString()}
+              </p>
+            </div>
           )}
         </div>
 
@@ -255,11 +278,14 @@ const Assessment = () => {
 
         {/* Submit overlay */}
         {submitting && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-            <div className="bg-white dark:bg-dark-surface rounded-lg p-8 text-center">
-              <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-indigo-600 mx-auto"></div>
-              <p className="mt-4 text-gray-700 dark:text-white font-medium">
+          <div className="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm flex items-center justify-center z-50">
+            <div className="bg-white dark:bg-dark-surface rounded-2xl p-8 text-center shadow-2xl">
+              <div className="animate-spin rounded-full h-16 w-16 border-b-4 border-blue-600 mx-auto"></div>
+              <p className="mt-4 text-gray-700 dark:text-white font-semibold text-lg">
                 Submitting assessment...
+              </p>
+              <p className="mt-2 text-gray-500 dark:text-gray-400 text-sm">
+                Analyzing your responses
               </p>
             </div>
           </div>

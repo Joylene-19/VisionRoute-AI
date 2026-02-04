@@ -2,6 +2,7 @@ import User from "../models/User.js";
 import { generateToken } from "../middleware/authMiddleware.js";
 import { ErrorResponse } from "../middleware/errorHandler.js";
 import { sendWelcomeEmail } from "../services/emailService.js";
+import { sendWelcomeNotification } from "../services/notificationService.js";
 
 /**
  * @desc    Register a new user
@@ -42,6 +43,11 @@ export const register = async (req, res, next) => {
     sendWelcomeEmail(user).catch((error) => {
       console.error("Failed to send welcome email:", error);
       // Don't fail registration if email fails
+    });
+
+    // Send welcome notification (async, don't wait)
+    sendWelcomeNotification(user._id, user.name).catch((error) => {
+      console.error("Failed to create welcome notification:", error);
     });
 
     res.status(201).json({
@@ -141,6 +147,11 @@ export const googleAuth = async (req, res, next) => {
         authProvider: "google",
         isEmailVerified: true,
         profilePhoto: profilePhoto || undefined,
+      });
+
+      // Send welcome notification for new Google users (async)
+      sendWelcomeNotification(user._id, user.name).catch((error) => {
+        console.error("Failed to create welcome notification:", error);
       });
     } else {
       // Update last login

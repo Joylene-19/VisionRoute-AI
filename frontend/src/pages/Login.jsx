@@ -6,7 +6,17 @@ import { z } from "zod";
 import { signInWithPopup } from "firebase/auth";
 import { motion } from "framer-motion";
 import toast from "react-hot-toast";
-import { Eye, EyeOff, LogIn, Mail, Lock } from "lucide-react";
+import {
+  Eye,
+  EyeOff,
+  LogIn,
+  Mail,
+  Lock,
+  Brain,
+  Sparkles,
+  TrendingUp,
+  Users,
+} from "lucide-react";
 import { auth, googleProvider } from "../firebase";
 import { loginUser, googleLogin } from "../services/authService";
 import useAuthStore from "../store/authStore";
@@ -80,169 +90,33 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-primary/10 via-background to-secondary/10 dark:from-gray-900 dark:via-dark-background dark:to-gray-800 flex items-center justify-center px-4 py-12">
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
-        className="w-full max-w-md"
-      >
-        {/* Logo & Title */}
-        <div className="text-center mb-8">
-          <motion.div
-            initial={{ scale: 0.8 }}
-            animate={{ scale: 1 }}
-            transition={{ duration: 0.5, delay: 0.1 }}
-            className="inline-block"
-          >
-            <div className="w-16 h-16 bg-gradient-primary rounded-2xl flex items-center justify-center mb-4 mx-auto shadow-lg">
-              <LogIn className="w-8 h-8 text-white" />
-            </div>
-          </motion.div>
-          <h1 className="text-3xl font-bold text-text-primary dark:text-white mb-2">
-            Welcome Back
-          </h1>
-          <p className="text-text-secondary dark:text-gray-400">
-            Sign in to continue your journey
-          </p>
-        </div>
-
-        {/* Login Form Card */}
+    <div className="min-h-screen flex">
+      {/* Left Side - Form */}
+      <div className="flex-1 flex items-center justify-center px-4 sm:px-6 lg:px-20 xl:px-24 bg-white dark:bg-gray-900">
         <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.5, delay: 0.2 }}
-          className="card"
+          initial={{ opacity: 0, x: -50 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.6 }}
+          className="w-full max-w-md"
         >
-          <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
-            {/* Email Input */}
-            <div>
-              <label
-                htmlFor="email"
-                className="block text-sm font-medium text-text-primary dark:text-white mb-2"
-              >
-                Email Address
-              </label>
-              <div className="relative">
-                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-text-secondary" />
-                <input
-                  {...register("email")}
-                  type="email"
-                  id="email"
-                  placeholder="you@example.com"
-                  className={`input pl-11 ${
-                    errors.email ? "border-error focus:ring-error" : ""
-                  }`}
-                />
-              </div>
-              {errors.email && (
-                <p className="mt-1 text-sm text-error">
-                  {errors.email.message}
-                </p>
-              )}
+          {/* Logo */}
+          <Link to="/" className="inline-flex items-center gap-2 mb-8">
+            <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl flex items-center justify-center">
+              <Brain className="w-6 h-6 text-white" />
             </div>
+            <span className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+              VisionRoute AI
+            </span>
+          </Link>
 
-            {/* Password Input */}
-            <div>
-              <label
-                htmlFor="password"
-                className="block text-sm font-medium text-text-primary dark:text-white mb-2"
-              >
-                Password
-              </label>
-              <div className="relative">
-                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-text-secondary" />
-                <input
-                  {...register("password")}
-                  type={showPassword ? "text" : "password"}
-                  id="password"
-                  placeholder="Enter your password"
-                  className={`input pl-11 pr-11 ${
-                    errors.password ? "border-error focus:ring-error" : ""
-                  }`}
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-text-secondary hover:text-text-primary transition-colors"
-                >
-                  {showPassword ? (
-                    <EyeOff className="w-5 h-5" />
-                  ) : (
-                    <Eye className="w-5 h-5" />
-                  )}
-                </button>
-              </div>
-              {errors.password && (
-                <p className="mt-1 text-sm text-error">
-                  {errors.password.message}
-                </p>
-              )}
-            </div>
-
-            {/* Remember Me & Forgot Password */}
-            <div className="flex items-center justify-between text-sm">
-              <label className="flex items-center cursor-pointer">
-                <input
-                  type="checkbox"
-                  className="w-4 h-4 rounded border-border text-primary focus:ring-2 focus:ring-primary"
-                />
-                <span className="ml-2 text-text-secondary">Remember me</span>
-              </label>
-              <Link
-                to="/forgot-password"
-                className="text-primary hover:text-primary-dark font-medium transition-colors"
-              >
-                Forgot password?
-              </Link>
-            </div>
-
-            {/* Login Button */}
-            <button
-              type="submit"
-              disabled={isSubmitting}
-              className="btn btn-gradient w-full py-3 text-base font-semibold disabled:opacity-50"
-            >
-              {isSubmitting ? (
-                <span className="flex items-center justify-center">
-                  <svg
-                    className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                  >
-                    <circle
-                      className="opacity-25"
-                      cx="12"
-                      cy="12"
-                      r="10"
-                      stroke="currentColor"
-                      strokeWidth="4"
-                    ></circle>
-                    <path
-                      className="opacity-75"
-                      fill="currentColor"
-                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                    ></path>
-                  </svg>
-                  Signing in...
-                </span>
-              ) : (
-                "Sign In"
-              )}
-            </button>
-          </form>
-
-          {/* Divider */}
-          <div className="relative my-6">
-            <div className="absolute inset-0 flex items-center">
-              <div className="w-full border-t border-border"></div>
-            </div>
-            <div className="relative flex justify-center text-sm">
-              <span className="px-4 bg-surface text-text-secondary">
-                Or continue with
-              </span>
-            </div>
+          {/* Title */}
+          <div className="mb-8">
+            <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-2">
+              Welcome Back
+            </h1>
+            <p className="text-gray-600 dark:text-gray-400">
+              Sign in to continue your career journey
+            </p>
           </div>
 
           {/* Google Login Button */}
@@ -250,7 +124,7 @@ const Login = () => {
             type="button"
             onClick={handleGoogleLogin}
             disabled={isGoogleLoading}
-            className="btn btn-secondary w-full py-3 text-base font-medium flex items-center justify-center gap-3"
+            className="w-full py-3.5 px-4 bg-white dark:bg-gray-800 border-2 border-gray-300 dark:border-gray-600 rounded-xl font-medium text-gray-900 dark:text-white hover:border-blue-500 dark:hover:border-blue-500 transition-all duration-200 flex items-center justify-center gap-3 mb-6"
           >
             {isGoogleLoading ? (
               <svg
@@ -298,29 +172,207 @@ const Login = () => {
             )}
           </button>
 
+          {/* Divider */}
+          <div className="relative mb-6">
+            <div className="absolute inset-0 flex items-center">
+              <div className="w-full border-t border-gray-300 dark:border-gray-600"></div>
+            </div>
+            <div className="relative flex justify-center text-sm">
+              <span className="px-4 bg-white dark:bg-gray-900 text-gray-500">
+                Or continue with email
+              </span>
+            </div>
+          </div>
+
+          {/* Login Form */}
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
+            {/* Email Input */}
+            <div>
+              <label
+                htmlFor="email"
+                className="block text-sm font-medium text-gray-900 dark:text-white mb-2"
+              >
+                Email Address
+              </label>
+              <div className="relative">
+                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                <input
+                  {...register("email")}
+                  type="email"
+                  id="email"
+                  placeholder="you@example.com"
+                  className={`w-full pl-11 pr-4 py-3 border-2 ${
+                    errors.email
+                      ? "border-red-300 focus:border-red-500 focus:ring-red-500"
+                      : "border-gray-300 dark:border-gray-600 focus:border-blue-500 focus:ring-blue-500"
+                  } rounded-xl focus:ring-2 focus:ring-opacity-20 transition-all bg-white dark:bg-gray-800 text-gray-900 dark:text-white`}
+                />
+              </div>
+              {errors.email && (
+                <p className="mt-1.5 text-sm text-red-600 dark:text-red-400">
+                  {errors.email.message}
+                </p>
+              )}
+            </div>
+
+            {/* Password Input */}
+            <div>
+              <label
+                htmlFor="password"
+                className="block text-sm font-medium text-gray-900 dark:text-white mb-2"
+              >
+                Password
+              </label>
+              <div className="relative">
+                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                <input
+                  {...register("password")}
+                  type={showPassword ? "text" : "password"}
+                  id="password"
+                  placeholder="Enter your password"
+                  className={`w-full pl-11 pr-11 py-3 border-2 ${
+                    errors.password
+                      ? "border-red-300 focus:border-red-500 focus:ring-red-500"
+                      : "border-gray-300 dark:border-gray-600 focus:border-blue-500 focus:ring-blue-500"
+                  } rounded-xl focus:ring-2 focus:ring-opacity-20 transition-all bg-white dark:bg-gray-800 text-gray-900 dark:text-white`}
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
+                >
+                  {showPassword ? (
+                    <EyeOff className="w-5 h-5" />
+                  ) : (
+                    <Eye className="w-5 h-5" />
+                  )}
+                </button>
+              </div>
+              {errors.password && (
+                <p className="mt-1.5 text-sm text-red-600 dark:text-red-400">
+                  {errors.password.message}
+                </p>
+              )}
+            </div>
+
+            {/* Remember Me & Forgot Password */}
+            <div className="flex items-center justify-between text-sm">
+              <label className="flex items-center cursor-pointer">
+                <input
+                  type="checkbox"
+                  className="w-4 h-4 rounded border-gray-300 text-blue-600 focus:ring-2 focus:ring-blue-500"
+                />
+                <span className="ml-2 text-gray-600 dark:text-gray-400">
+                  Remember me
+                </span>
+              </label>
+              <Link
+                to="/forgot-password"
+                className="text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 font-medium transition-colors"
+              >
+                Forgot password?
+              </Link>
+            </div>
+
+            {/* Login Button */}
+            <button
+              type="submit"
+              disabled={isSubmitting}
+              className="w-full py-3.5 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl font-semibold hover:from-blue-700 hover:to-purple-700 transition-all duration-200 shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {isSubmitting ? (
+                <span className="flex items-center justify-center">
+                  <svg
+                    className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                  >
+                    <circle
+                      className="opacity-25"
+                      cx="12"
+                      cy="12"
+                      r="10"
+                      stroke="currentColor"
+                      strokeWidth="4"
+                    ></circle>
+                    <path
+                      className="opacity-75"
+                      fill="currentColor"
+                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                    ></path>
+                  </svg>
+                  Signing in...
+                </span>
+              ) : (
+                "Sign In"
+              )}
+            </button>
+          </form>
+
           {/* Sign Up Link */}
-          <p className="mt-6 text-center text-sm text-text-secondary">
+          <p className="mt-6 text-center text-sm text-gray-600 dark:text-gray-400">
             Don't have an account?{" "}
             <Link
               to="/register"
-              className="text-primary hover:text-primary-dark font-semibold transition-colors"
+              className="text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 font-semibold transition-colors"
             >
               Sign up for free
             </Link>
           </p>
         </motion.div>
+      </div>
 
-        {/* Footer */}
-        <p className="mt-8 text-center text-xs text-text-secondary">
-          By signing in, you agree to our{" "}
-          <a href="#" className="text-primary hover:underline">
-            Terms of Service
-          </a>{" "}
-          and{" "}
-          <a href="#" className="text-primary hover:underline">
-            Privacy Policy
-          </a>
-        </p>
+      {/* Right Side - Image/Info */}
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.8 }}
+        className="hidden lg:flex flex-1 bg-gradient-to-br from-blue-600 via-purple-600 to-pink-500 relative overflow-hidden"
+      >
+        {/* Background Pattern */}
+        <div className="absolute inset-0 opacity-10">
+          <div className="absolute top-0 -left-4 w-72 h-72 bg-white rounded-full mix-blend-multiply filter blur-xl animate-blob"></div>
+          <div className="absolute top-0 -right-4 w-72 h-72 bg-white rounded-full mix-blend-multiply filter blur-xl animate-blob animation-delay-2000"></div>
+          <div className="absolute -bottom-8 left-20 w-72 h-72 bg-white rounded-full mix-blend-multiply filter blur-xl animate-blob animation-delay-4000"></div>
+        </div>
+
+        {/* Content */}
+        <div className="relative z-10 flex flex-col items-center justify-center w-full p-12 text-white">
+          <Sparkles className="w-16 h-16 mb-6" />
+          <h2 className="text-4xl font-bold mb-4 text-center">
+            Discover Your Perfect Career Path
+          </h2>
+          <p className="text-xl text-white/90 mb-12 text-center max-w-md">
+            Join thousands of students who found their dream careers with
+            AI-powered guidance
+          </p>
+
+          {/* Stats */}
+          <div className="grid grid-cols-3 gap-8 w-full max-w-2xl">
+            <div className="text-center">
+              <div className="w-16 h-16 bg-white/20 backdrop-blur-lg rounded-2xl flex items-center justify-center mx-auto mb-3">
+                <Users className="w-8 h-8 text-white" />
+              </div>
+              <div className="text-3xl font-bold">10,000+</div>
+              <div className="text-sm text-white/80">Students Guided</div>
+            </div>
+            <div className="text-center">
+              <div className="w-16 h-16 bg-white/20 backdrop-blur-lg rounded-2xl flex items-center justify-center mx-auto mb-3">
+                <TrendingUp className="w-8 h-8 text-white" />
+              </div>
+              <div className="text-3xl font-bold">95%</div>
+              <div className="text-sm text-white/80">Success Rate</div>
+            </div>
+            <div className="text-center">
+              <div className="w-16 h-16 bg-white/20 backdrop-blur-lg rounded-2xl flex items-center justify-center mx-auto mb-3">
+                <Brain className="w-8 h-8 text-white" />
+              </div>
+              <div className="text-3xl font-bold">AI</div>
+              <div className="text-sm text-white/80">Powered</div>
+            </div>
+          </div>
+        </div>
       </motion.div>
     </div>
   );

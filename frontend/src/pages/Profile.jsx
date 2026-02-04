@@ -14,6 +14,8 @@ import {
   Edit2,
   Save,
   X,
+  Award,
+  Camera,
 } from "lucide-react";
 import useAuthStore from "../store/authStore";
 import { updateUserProfile } from "../services/authService";
@@ -105,18 +107,18 @@ const Profile = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background dark:bg-dark-background py-12 px-4">
-      <div className="max-w-4xl mx-auto">
+    <div className="min-h-screen bg-gradient-soft dark:bg-dark-background py-12 px-4">
+      <div className="max-w-6xl mx-auto">
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           className="text-center mb-8"
         >
-          <h1 className="text-4xl font-bold text-text-primary dark:text-white mb-2">
+          <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent mb-2">
             My Profile
           </h1>
-          <p className="text-text-secondary dark:text-gray-300">
+          <p className="text-gray-600 dark:text-gray-300 text-lg">
             Manage your account information
           </p>
         </motion.div>
@@ -127,56 +129,60 @@ const Profile = () => {
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.1 }}
-            className="card text-center lg:col-span-1"
+            className="bg-white dark:bg-dark-surface rounded-2xl shadow-lg p-8 text-center lg:col-span-1"
           >
             {/* Profile Photo */}
-            <div className="mb-4">
+            <div className="mb-6 relative inline-block">
               {user?.profilePhoto ? (
                 <img
                   src={user.profilePhoto}
                   alt={user.name}
-                  className="w-32 h-32 rounded-full mx-auto object-cover border-4 border-primary/20"
+                  className="w-32 h-32 rounded-full mx-auto object-cover border-4 border-blue-200 dark:border-blue-800"
                 />
               ) : (
-                <div className="w-32 h-32 rounded-full mx-auto bg-gradient-primary flex items-center justify-center text-white text-4xl font-bold">
+                <div className="w-32 h-32 rounded-full mx-auto bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white text-4xl font-bold shadow-lg">
                   {getInitials(user?.name)}
                 </div>
               )}
+              <button className="absolute bottom-0 right-0 bg-white dark:bg-gray-800 p-2 rounded-full shadow-lg border-2 border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+                <Camera className="w-4 h-4 text-gray-600 dark:text-gray-300" />
+              </button>
             </div>
 
-            <h2 className="text-2xl font-bold text-text-primary dark:text-white mb-1">
+            <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-1">
               {user?.name}
             </h2>
-            <p className="text-text-secondary dark:text-gray-300 mb-4">
+            <p className="text-gray-600 dark:text-gray-300 mb-6">
               {user?.email}
             </p>
 
             {/* Stats */}
-            <div className="grid grid-cols-2 gap-4 mt-6 pt-6 border-t border-border dark:border-gray-700">
-              <div>
-                <div className="text-2xl font-bold text-primary">
+            <div className="grid grid-cols-2 gap-4 mt-6 pt-6 border-t border-gray-200 dark:border-gray-700">
+              <div className="bg-blue-50 dark:bg-blue-900/20 rounded-xl p-4">
+                <Award className="w-6 h-6 text-blue-600 dark:text-blue-400 mx-auto mb-2" />
+                <div className="text-2xl font-bold text-blue-600 dark:text-blue-400">
                   {user?.completedAssessments || 0}
                 </div>
-                <div className="text-sm text-text-secondary dark:text-gray-400">
+                <div className="text-sm text-gray-600 dark:text-gray-400">
                   Assessments
                 </div>
               </div>
-              <div>
-                <div className="text-2xl font-bold text-success">
+              <div className="bg-green-50 dark:bg-green-900/20 rounded-xl p-4">
+                <div className="text-2xl font-bold text-green-600 dark:text-green-400">
                   {user?.loginCount || 0}
                 </div>
-                <div className="text-sm text-text-secondary dark:text-gray-400">
+                <div className="text-sm text-gray-600 dark:text-gray-400">
                   Logins
                 </div>
               </div>
             </div>
 
             {/* Member Since */}
-            <div className="mt-6 pt-6 border-t border-border dark:border-gray-700">
-              <div className="text-sm text-text-secondary dark:text-gray-400">
+            <div className="mt-6 pt-6 border-t border-gray-200 dark:border-gray-700">
+              <div className="text-sm text-gray-600 dark:text-gray-400 mb-1">
                 Member since
               </div>
-              <div className="text-text-primary dark:text-white font-medium">
+              <div className="text-gray-900 dark:text-white font-semibold">
                 {new Date(user?.createdAt).toLocaleDateString("en-IN", {
                   month: "long",
                   year: "numeric",
@@ -190,18 +196,18 @@ const Profile = () => {
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.2 }}
-            className="card lg:col-span-2"
+            className="bg-white dark:bg-dark-surface rounded-2xl shadow-lg p-8 lg:col-span-2"
           >
             {/* Header with Edit Button */}
             <div className="flex justify-between items-center mb-6">
-              <h3 className="text-2xl font-bold text-text-primary dark:text-white">
+              <h3 className="text-2xl font-bold text-gray-900 dark:text-white">
                 Personal Information
               </h3>
               {!isEditing ? (
                 <button
                   type="button"
                   onClick={() => setIsEditing(true)}
-                  className="btn btn-secondary px-4 py-2 flex items-center gap-2"
+                  className="px-5 py-2.5 bg-blue-600 text-white rounded-xl font-medium hover:bg-blue-700 transition-colors shadow-lg flex items-center gap-2"
                 >
                   <Edit2 className="w-4 h-4" />
                   Edit Profile
@@ -210,7 +216,7 @@ const Profile = () => {
                 <button
                   type="button"
                   onClick={handleCancelEdit}
-                  className="btn btn-secondary px-4 py-2 flex items-center gap-2"
+                  className="px-5 py-2.5 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-xl font-medium hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors flex items-center gap-2"
                 >
                   <X className="w-4 h-4" />
                   Cancel
@@ -221,22 +227,24 @@ const Profile = () => {
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
               {/* Name */}
               <div>
-                <label className="block text-sm font-medium text-text-primary mb-2">
+                <label className="block text-sm font-medium text-gray-900 dark:text-white mb-2">
                   Full Name
                 </label>
                 <div className="relative">
-                  <User className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-text-secondary" />
+                  <User className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
                   <input
                     {...register("name")}
                     type="text"
                     disabled={!isEditing}
-                    className={`input pl-11 ${
-                      !isEditing ? "bg-gray-50 cursor-not-allowed" : ""
-                    }`}
+                    className={`w-full pl-11 pr-4 py-3 border-2 rounded-xl transition-all ${
+                      !isEditing
+                        ? "bg-gray-50 dark:bg-gray-800 border-gray-200 dark:border-gray-700 cursor-not-allowed"
+                        : "bg-white dark:bg-gray-900 border-gray-300 dark:border-gray-600 focus:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:ring-opacity-20"
+                    } text-gray-900 dark:text-white`}
                   />
                 </div>
                 {errors.name && (
-                  <p className="mt-1 text-sm text-error">
+                  <p className="mt-1.5 text-sm text-red-600 dark:text-red-400">
                     {errors.name.message}
                   </p>
                 )}
@@ -244,7 +252,7 @@ const Profile = () => {
 
               {/* Email (Read-only) */}
               <div>
-                <label className="block text-sm font-medium text-text-primary mb-2">
+                <label className="block text-sm font-medium text-gray-900 dark:text-white mb-2">
                   Email Address
                 </label>
                 <div className="relative">

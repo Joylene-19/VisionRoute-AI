@@ -15,6 +15,10 @@ import {
   User,
   Phone,
   GraduationCap,
+  Brain,
+  Target,
+  Award,
+  BookOpen,
 } from "lucide-react";
 import { auth, googleProvider } from "../firebase";
 import { registerUser, googleLogin } from "../services/authService";
@@ -107,46 +111,41 @@ const Register = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-secondary/10 via-background to-primary/10 dark:from-gray-900 dark:via-dark-background dark:to-gray-800 flex items-center justify-center px-4 py-12">
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
-        className="w-full max-w-2xl"
-      >
-        {/* Logo & Title */}
-        <div className="text-center mb-8">
-          <motion.div
-            initial={{ scale: 0.8 }}
-            animate={{ scale: 1 }}
-            transition={{ duration: 0.5, delay: 0.1 }}
-            className="inline-block"
-          >
-            <div className="w-16 h-16 bg-gradient-primary rounded-2xl flex items-center justify-center mb-4 mx-auto shadow-lg">
-              <UserPlus className="w-8 h-8 text-white" />
-            </div>
-          </motion.div>
-          <h1 className="text-3xl font-bold text-text-primary mb-2">
-            Create Account
-          </h1>
-          <p className="text-text-secondary">
-            Start your journey to discover your ideal stream
-          </p>
-        </div>
-
-        {/* Registration Form Card */}
+    <div className="min-h-screen flex">
+      {/* Left Side - Form */}
+      <div className="flex-1 flex items-center justify-center px-4 sm:px-6 lg:px-20 xl:px-24 bg-white dark:bg-gray-900 overflow-y-auto">
         <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.5, delay: 0.2 }}
-          className="card"
+          initial={{ opacity: 0, x: -50 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.6 }}
+          className="w-full max-w-lg py-12"
         >
-          {/* Google Sign Up Button (Top) */}
+          {/* Logo */}
+          <Link to="/" className="inline-flex items-center gap-2 mb-6">
+            <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl flex items-center justify-center">
+              <Brain className="w-6 h-6 text-white" />
+            </div>
+            <span className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+              VisionRoute AI
+            </span>
+          </Link>
+
+          {/* Title */}
+          <div className="mb-6">
+            <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
+              Create Your Account
+            </h1>
+            <p className="text-gray-600 dark:text-gray-400">
+              Join thousands of students discovering their perfect career path
+            </p>
+          </div>
+
+          {/* Google Sign Up Button */}
           <button
             type="button"
             onClick={handleGoogleSignup}
             disabled={isGoogleLoading}
-            className="btn btn-secondary w-full py-3 text-base font-medium flex items-center justify-center gap-3 mb-6"
+            className="w-full py-3 px-4 bg-white dark:bg-gray-800 border-2 border-gray-300 dark:border-gray-600 rounded-xl font-medium text-gray-900 dark:text-white hover:border-blue-500 dark:hover:border-blue-500 transition-all duration-200 flex items-center justify-center gap-3 mb-5"
           >
             {isGoogleLoading ? (
               <svg
@@ -195,67 +194,74 @@ const Register = () => {
           </button>
 
           {/* Divider */}
-          <div className="relative my-6">
+          <div className="relative mb-5">
             <div className="absolute inset-0 flex items-center">
-              <div className="w-full border-t border-border"></div>
+              <div className="w-full border-t border-gray-300 dark:border-gray-600"></div>
             </div>
             <div className="relative flex justify-center text-sm">
-              <span className="px-4 bg-surface text-text-secondary">
+              <span className="px-4 bg-white dark:bg-gray-900 text-gray-500">
                 Or register with email
               </span>
             </div>
           </div>
 
-          <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
+          {/* Registration Form */}
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
             {/* Name Input */}
             <div>
               <label
                 htmlFor="name"
-                className="block text-sm font-medium text-text-primary mb-2"
+                className="block text-sm font-medium text-gray-900 dark:text-white mb-1.5"
               >
-                Full Name <span className="text-error">*</span>
+                Full Name <span className="text-red-500">*</span>
               </label>
               <div className="relative">
-                <User className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-text-secondary" />
+                <User className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
                 <input
                   {...register("name")}
                   type="text"
                   id="name"
                   placeholder="John Doe"
-                  className={`input pl-11 ${
-                    errors.name ? "border-error focus:ring-error" : ""
-                  }`}
+                  className={`w-full pl-11 pr-4 py-2.5 border-2 ${
+                    errors.name
+                      ? "border-red-300 focus:border-red-500 focus:ring-red-500"
+                      : "border-gray-300 dark:border-gray-600 focus:border-blue-500 focus:ring-blue-500"
+                  } rounded-xl focus:ring-2 focus:ring-opacity-20 transition-all bg-white dark:bg-gray-800 text-gray-900 dark:text-white`}
                 />
               </div>
               {errors.name && (
-                <p className="mt-1 text-sm text-error">{errors.name.message}</p>
+                <p className="mt-1 text-sm text-red-600 dark:text-red-400">
+                  {errors.name.message}
+                </p>
               )}
             </div>
 
             {/* Email & Phone (Grid) */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {/* Email */}
               <div>
                 <label
                   htmlFor="email"
-                  className="block text-sm font-medium text-text-primary mb-2"
+                  className="block text-sm font-medium text-gray-900 dark:text-white mb-1.5"
                 >
-                  Email <span className="text-error">*</span>
+                  Email <span className="text-red-500">*</span>
                 </label>
                 <div className="relative">
-                  <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-text-secondary" />
+                  <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
                   <input
                     {...register("email")}
                     type="email"
                     id="email"
                     placeholder="you@example.com"
-                    className={`input pl-11 ${
-                      errors.email ? "border-error focus:ring-error" : ""
-                    }`}
+                    className={`w-full pl-11 pr-4 py-2.5 border-2 ${
+                      errors.email
+                        ? "border-red-300 focus:border-red-500 focus:ring-red-500"
+                        : "border-gray-300 dark:border-gray-600 focus:border-blue-500 focus:ring-blue-500"
+                    } rounded-xl focus:ring-2 focus:ring-opacity-20 transition-all bg-white dark:bg-gray-800 text-gray-900 dark:text-white`}
                   />
                 </div>
                 {errors.email && (
-                  <p className="mt-1 text-sm text-error">
+                  <p className="mt-1 text-sm text-red-600 dark:text-red-400">
                     {errors.email.message}
                   </p>
                 )}
@@ -265,24 +271,26 @@ const Register = () => {
               <div>
                 <label
                   htmlFor="phone"
-                  className="block text-sm font-medium text-text-primary mb-2"
+                  className="block text-sm font-medium text-gray-900 dark:text-white mb-1.5"
                 >
                   Phone (Optional)
                 </label>
                 <div className="relative">
-                  <Phone className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-text-secondary" />
+                  <Phone className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
                   <input
                     {...register("phone")}
                     type="tel"
                     id="phone"
                     placeholder="1234567890"
-                    className={`input pl-11 ${
-                      errors.phone ? "border-error focus:ring-error" : ""
-                    }`}
+                    className={`w-full pl-11 pr-4 py-2.5 border-2 ${
+                      errors.phone
+                        ? "border-red-300 focus:border-red-500 focus:ring-red-500"
+                        : "border-gray-300 dark:border-gray-600 focus:border-blue-500 focus:ring-blue-500"
+                    } rounded-xl focus:ring-2 focus:ring-opacity-20 transition-all bg-white dark:bg-gray-800 text-gray-900 dark:text-white`}
                   />
                 </div>
                 {errors.phone && (
-                  <p className="mt-1 text-sm text-error">
+                  <p className="mt-1 text-sm text-red-600 dark:text-red-400">
                     {errors.phone.message}
                   </p>
                 )}
@@ -293,16 +301,16 @@ const Register = () => {
             <div>
               <label
                 htmlFor="currentGrade"
-                className="block text-sm font-medium text-text-primary mb-2"
+                className="block text-sm font-medium text-gray-900 dark:text-white mb-1.5"
               >
                 Current Grade (Optional)
               </label>
               <div className="relative">
-                <GraduationCap className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-text-secondary" />
+                <GraduationCap className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
                 <select
                   {...register("currentGrade")}
                   id="currentGrade"
-                  className="input pl-11"
+                  className="w-full pl-11 pr-4 py-2.5 border-2 border-gray-300 dark:border-gray-600 focus:border-blue-500 focus:ring-blue-500 rounded-xl focus:ring-2 focus:ring-opacity-20 transition-all bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
                 >
                   <option value="">Select your grade</option>
                   {GRADE_OPTIONS.map((option) => (
@@ -315,30 +323,32 @@ const Register = () => {
             </div>
 
             {/* Password & Confirm Password (Grid) */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {/* Password */}
               <div>
                 <label
                   htmlFor="password"
-                  className="block text-sm font-medium text-text-primary mb-2"
+                  className="block text-sm font-medium text-gray-900 dark:text-white mb-1.5"
                 >
-                  Password <span className="text-error">*</span>
+                  Password <span className="text-red-500">*</span>
                 </label>
                 <div className="relative">
-                  <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-text-secondary" />
+                  <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
                   <input
                     {...register("password")}
                     type={showPassword ? "text" : "password"}
                     id="password"
                     placeholder="Min. 6 characters"
-                    className={`input pl-11 pr-11 ${
-                      errors.password ? "border-error focus:ring-error" : ""
-                    }`}
+                    className={`w-full pl-11 pr-11 py-2.5 border-2 ${
+                      errors.password
+                        ? "border-red-300 focus:border-red-500 focus:ring-red-500"
+                        : "border-gray-300 dark:border-gray-600 focus:border-blue-500 focus:ring-blue-500"
+                    } rounded-xl focus:ring-2 focus:ring-opacity-20 transition-all bg-white dark:bg-gray-800 text-gray-900 dark:text-white`}
                   />
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-text-secondary hover:text-text-primary transition-colors"
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
                   >
                     {showPassword ? (
                       <EyeOff className="w-5 h-5" />
@@ -348,7 +358,7 @@ const Register = () => {
                   </button>
                 </div>
                 {errors.password && (
-                  <p className="mt-1 text-sm text-error">
+                  <p className="mt-1 text-sm text-red-600 dark:text-red-400">
                     {errors.password.message}
                   </p>
                 )}
@@ -358,27 +368,27 @@ const Register = () => {
               <div>
                 <label
                   htmlFor="confirmPassword"
-                  className="block text-sm font-medium text-text-primary mb-2"
+                  className="block text-sm font-medium text-gray-900 dark:text-white mb-1.5"
                 >
-                  Confirm Password <span className="text-error">*</span>
+                  Confirm Password <span className="text-red-500">*</span>
                 </label>
                 <div className="relative">
-                  <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-text-secondary" />
+                  <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
                   <input
                     {...register("confirmPassword")}
                     type={showConfirmPassword ? "text" : "password"}
                     id="confirmPassword"
                     placeholder="Repeat password"
-                    className={`input pl-11 pr-11 ${
+                    className={`w-full pl-11 pr-11 py-2.5 border-2 ${
                       errors.confirmPassword
-                        ? "border-error focus:ring-error"
-                        : ""
-                    }`}
+                        ? "border-red-300 focus:border-red-500 focus:ring-red-500"
+                        : "border-gray-300 dark:border-gray-600 focus:border-blue-500 focus:ring-blue-500"
+                    } rounded-xl focus:ring-2 focus:ring-opacity-20 transition-all bg-white dark:bg-gray-800 text-gray-900 dark:text-white`}
                   />
                   <button
                     type="button"
                     onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-text-secondary hover:text-text-primary transition-colors"
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
                   >
                     {showConfirmPassword ? (
                       <EyeOff className="w-5 h-5" />
@@ -388,7 +398,7 @@ const Register = () => {
                   </button>
                 </div>
                 {errors.confirmPassword && (
-                  <p className="mt-1 text-sm text-error">
+                  <p className="mt-1 text-sm text-red-600 dark:text-red-400">
                     {errors.confirmPassword.message}
                   </p>
                 )}
@@ -396,23 +406,29 @@ const Register = () => {
             </div>
 
             {/* Terms & Conditions */}
-            <div className="flex items-start">
+            <div className="flex items-start pt-1">
               <input
                 type="checkbox"
                 id="terms"
                 required
-                className="w-4 h-4 mt-1 rounded border-border text-primary focus:ring-2 focus:ring-primary"
+                className="w-4 h-4 mt-1 rounded border-gray-300 text-blue-600 focus:ring-2 focus:ring-blue-500"
               />
               <label
                 htmlFor="terms"
-                className="ml-2 text-sm text-text-secondary"
+                className="ml-2 text-sm text-gray-600 dark:text-gray-400"
               >
                 I agree to the{" "}
-                <a href="#" className="text-primary hover:underline">
+                <a
+                  href="#"
+                  className="text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 underline"
+                >
                   Terms of Service
                 </a>{" "}
                 and{" "}
-                <a href="#" className="text-primary hover:underline">
+                <a
+                  href="#"
+                  className="text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 underline"
+                >
                   Privacy Policy
                 </a>
               </label>
@@ -422,7 +438,7 @@ const Register = () => {
             <button
               type="submit"
               disabled={isSubmitting}
-              className="btn btn-gradient w-full py-3 text-base font-semibold"
+              className="w-full py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl font-semibold hover:from-blue-700 hover:to-purple-700 transition-all duration-200 shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed mt-2"
             >
               {isSubmitting ? (
                 <span className="flex items-center justify-center">
@@ -455,16 +471,86 @@ const Register = () => {
           </form>
 
           {/* Login Link */}
-          <p className="mt-6 text-center text-sm text-text-secondary">
+          <p className="mt-5 text-center text-sm text-gray-600 dark:text-gray-400">
             Already have an account?{" "}
             <Link
               to="/login"
-              className="text-primary hover:text-primary-dark font-semibold transition-colors"
+              className="text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 font-semibold transition-colors"
             >
               Sign in
             </Link>
           </p>
         </motion.div>
+      </div>
+
+      {/* Right Side - Benefits */}
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.8 }}
+        className="hidden lg:flex flex-1 bg-gradient-to-br from-purple-600 via-pink-500 to-orange-500 relative overflow-hidden"
+      >
+        {/* Background Pattern */}
+        <div className="absolute inset-0 opacity-10">
+          <div className="absolute top-0 -left-4 w-72 h-72 bg-white rounded-full mix-blend-multiply filter blur-xl animate-blob"></div>
+          <div className="absolute top-0 -right-4 w-72 h-72 bg-white rounded-full mix-blend-multiply filter blur-xl animate-blob animation-delay-2000"></div>
+          <div className="absolute -bottom-8 left-20 w-72 h-72 bg-white rounded-full mix-blend-multiply filter blur-xl animate-blob animation-delay-4000"></div>
+        </div>
+
+        {/* Content */}
+        <div className="relative z-10 flex flex-col items-center justify-center w-full p-12 text-white">
+          <UserPlus className="w-16 h-16 mb-6" />
+          <h2 className="text-4xl font-bold mb-4 text-center">
+            Start Your Journey Today
+          </h2>
+          <p className="text-xl text-white/90 mb-12 text-center max-w-md">
+            Get personalized career guidance powered by AI in minutes
+          </p>
+
+          {/* Benefits */}
+          <div className="space-y-6 w-full max-w-md">
+            <div className="flex items-start gap-4 bg-white/10 backdrop-blur-lg rounded-2xl p-6">
+              <div className="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center flex-shrink-0">
+                <Brain className="w-6 h-6 text-white" />
+              </div>
+              <div>
+                <h3 className="font-semibold text-lg mb-1">
+                  AI-Powered Analysis
+                </h3>
+                <p className="text-sm text-white/80">
+                  Get intelligent career recommendations based on your unique
+                  profile
+                </p>
+              </div>
+            </div>
+
+            <div className="flex items-start gap-4 bg-white/10 backdrop-blur-lg rounded-2xl p-6">
+              <div className="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center flex-shrink-0">
+                <Target className="w-6 h-6 text-white" />
+              </div>
+              <div>
+                <h3 className="font-semibold text-lg mb-1">
+                  Personalized Paths
+                </h3>
+                <p className="text-sm text-white/80">
+                  Discover careers tailored to your interests and strengths
+                </p>
+              </div>
+            </div>
+
+            <div className="flex items-start gap-4 bg-white/10 backdrop-blur-lg rounded-2xl p-6">
+              <div className="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center flex-shrink-0">
+                <Award className="w-6 h-6 text-white" />
+              </div>
+              <div>
+                <h3 className="font-semibold text-lg mb-1">Expert Guidance</h3>
+                <p className="text-sm text-white/80">
+                  Access comprehensive career information and roadmaps
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
       </motion.div>
     </div>
   );

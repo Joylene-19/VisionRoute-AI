@@ -62,25 +62,27 @@ const UserDashboard = () => {
     dashboardData?.quoteOfDay || "Your career journey starts today!";
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-50 via-blue-50 to-indigo-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 py-8 px-4">
+    <div className="min-h-screen bg-gradient-soft dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 py-8 px-4">
       <div className="max-w-7xl mx-auto space-y-6">
         {/* Hero Section */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="bg-gradient-to-r from-indigo-600 to-purple-600 dark:from-indigo-700 dark:to-purple-700 rounded-2xl p-8 text-white shadow-xl"
+          className="bg-gradient-to-r from-blue-600 to-purple-600 dark:from-blue-700 dark:to-purple-700 rounded-2xl p-8 text-white shadow-xl overflow-hidden relative"
         >
-          <div className="flex flex-col md:flex-row items-center justify-between">
+          {/* Background decoration */}
+          <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full -mr-32 -mt-32"></div>
+          <div className="absolute bottom-0 left-0 w-48 h-48 bg-white/10 rounded-full -ml-24 -mb-24"></div>
+
+          <div className="relative z-10 flex flex-col md:flex-row items-center justify-between">
             <div className="flex-1 mb-6 md:mb-0">
               <h1 className="text-4xl font-bold mb-2">
-                Welcome back, {user?.displayName || user?.name}! 👋
+                Welcome back, {user?.displayName || user?.name}!
               </h1>
-              <p className="text-indigo-100 text-lg italic mb-4">
-                "{quoteOfDay}"
-              </p>
+              <p className="text-blue-100 text-lg mb-4">"{quoteOfDay}"</p>
 
               {/* Profile Completion */}
-              <div className="mt-4">
+              <div className="mt-4 bg-white/10 backdrop-blur-sm rounded-xl p-4">
                 <div className="flex items-center justify-between mb-2">
                   <span className="text-sm font-medium">
                     Profile Completion
@@ -89,12 +91,12 @@ const UserDashboard = () => {
                     {stats.profileStrength}%
                   </span>
                 </div>
-                <div className="w-full bg-indigo-400 rounded-full h-3">
+                <div className="w-full bg-white/20 rounded-full h-2.5">
                   <motion.div
                     initial={{ width: 0 }}
                     animate={{ width: `${stats.profileStrength}%` }}
                     transition={{ duration: 1, delay: 0.5 }}
-                    className="bg-white h-3 rounded-full shadow-lg"
+                    className="bg-white h-2.5 rounded-full shadow-lg"
                   />
                 </div>
               </div>
@@ -104,7 +106,7 @@ const UserDashboard = () => {
             <div className="flex flex-col gap-3 md:ml-8">
               <Link
                 to="/assessment"
-                className="bg-white text-indigo-600 px-6 py-3 rounded-lg font-semibold hover:bg-indigo-50 transition-all shadow-lg hover:shadow-xl flex items-center gap-2"
+                className="bg-white text-blue-600 px-6 py-3 rounded-xl font-semibold hover:bg-blue-50 transition-all shadow-lg hover:shadow-xl flex items-center gap-2"
               >
                 <Target className="w-5 h-5" />
                 Start Assessment
@@ -112,7 +114,7 @@ const UserDashboard = () => {
               {stats.assessmentsCompleted > 0 && (
                 <Link
                   to="/results"
-                  className="bg-indigo-500 text-white px-6 py-3 rounded-lg font-semibold hover:bg-indigo-400 transition-all shadow-lg hover:shadow-xl flex items-center gap-2"
+                  className="bg-blue-500 text-white px-6 py-3 rounded-xl font-semibold hover:bg-blue-400 transition-all shadow-lg hover:shadow-xl flex items-center gap-2"
                 >
                   <FileText className="w-5 h-5" />
                   View Results
@@ -128,7 +130,7 @@ const UserDashboard = () => {
             icon={Award}
             title="Assessments"
             value={stats.assessmentsCompleted}
-            color="blue"
+            color="teal"
             delay={0.1}
           />
           <StatsCard
@@ -142,14 +144,14 @@ const UserDashboard = () => {
             icon={Clock}
             title="Time Spent"
             value={stats.timeSpent}
-            color="green"
+            color="orange"
             delay={0.3}
           />
           <StatsCard
             icon={Target}
             title="Profile Score"
             value={`${stats.profileStrength}%`}
-            color="orange"
+            color="pink"
             delay={0.4}
           />
         </div>
@@ -261,10 +263,11 @@ const UserDashboard = () => {
 // Stats Card Component
 const StatsCard = ({ icon: Icon, title, value, color, delay }) => {
   const colorClasses = {
-    blue: "from-blue-500 to-blue-600",
-    purple: "from-purple-500 to-purple-600",
-    green: "from-green-500 to-green-600",
-    orange: "from-orange-500 to-orange-600",
+    blue: "from-blue-500 to-cyan-500",
+    purple: "from-purple-500 to-pink-500",
+    teal: "from-teal-500 to-green-500",
+    orange: "from-orange-500 to-yellow-500",
+    pink: "from-pink-500 to-rose-500",
   };
 
   return (
@@ -272,7 +275,7 @@ const StatsCard = ({ icon: Icon, title, value, color, delay }) => {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay }}
-      className="bg-white dark:bg-dark-surface rounded-xl shadow-lg p-6 hover:shadow-xl transition-shadow"
+      className="bg-white dark:bg-dark-surface rounded-2xl shadow-lg p-6 hover:shadow-xl transition-all hover:-translate-y-1"
     >
       <div className="flex items-center justify-between">
         <div>
@@ -284,9 +287,9 @@ const StatsCard = ({ icon: Icon, title, value, color, delay }) => {
           </p>
         </div>
         <div
-          className={`bg-gradient-to-br ${colorClasses[color]} p-3 rounded-xl`}
+          className={`bg-gradient-to-br ${colorClasses[color]} p-4 rounded-xl shadow-lg`}
         >
-          <Icon className="w-8 h-8 text-white" />
+          <Icon className="w-7 h-7 text-white" />
         </div>
       </div>
     </motion.div>

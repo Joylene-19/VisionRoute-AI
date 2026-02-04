@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
+import { motion } from "framer-motion";
 import api from "../services/api";
 import toast from "react-hot-toast";
 import RIASECRadarChart from "../components/charts/RIASECRadarChart";
@@ -180,10 +181,12 @@ const Results = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+      <div className="min-h-screen flex items-center justify-center bg-gradient-soft dark:bg-dark-background">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-indigo-600 mx-auto"></div>
-          <p className="mt-4 text-gray-600">Loading your results...</p>
+          <div className="animate-spin rounded-full h-16 w-16 border-b-4 border-blue-600 mx-auto"></div>
+          <p className="mt-4 text-gray-700 dark:text-gray-300 font-medium text-lg">
+            Loading your results...
+          </p>
         </div>
       </div>
     );
@@ -191,20 +194,24 @@ const Results = () => {
 
   if (generating) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
-        <div className="text-center max-w-md">
-          <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-indigo-600 mx-auto"></div>
-          <h2 className="mt-4 text-2xl font-bold text-gray-800">
+      <div className="min-h-screen flex items-center justify-center bg-gradient-soft dark:bg-dark-background">
+        <motion.div
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          className="text-center max-w-md bg-white dark:bg-dark-surface rounded-2xl shadow-2xl p-8"
+        >
+          <div className="animate-spin rounded-full h-16 w-16 border-b-4 border-blue-600 mx-auto"></div>
+          <h2 className="mt-6 text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
             Analyzing Your Assessment...
           </h2>
-          <p className="mt-2 text-gray-600">
+          <p className="mt-2 text-gray-600 dark:text-gray-300">
             Our AI is processing your responses to generate personalized career
             recommendations.
           </p>
-          <p className="mt-4 text-sm text-gray-500">
+          <p className="mt-4 text-sm text-gray-500 dark:text-gray-400">
             This may take 10-30 seconds
           </p>
-        </div>
+        </motion.div>
       </div>
     );
   }
