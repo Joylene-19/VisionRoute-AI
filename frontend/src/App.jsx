@@ -28,6 +28,7 @@ import AssessmentDetail from "./pages/admin/AssessmentDetail";
 import Analytics from "./pages/admin/Analytics";
 import Settings from "./pages/admin/Settings";
 import CareerChatbot from "./pages/CareerChatbot";
+import OpportunityAnalyzer from "./pages/OpportunityAnalyzer";
 
 function App() {
   return (
@@ -146,6 +147,16 @@ function App() {
             element={
               <ProtectedRoute>
                 <CareerChatbot />
+              </ProtectedRoute>
+            }
+          />
+
+          {/* Opportunity Analyzer - New Feature */}
+          <Route
+            path="/opportunity-analyzer"
+            element={
+              <ProtectedRoute>
+                <OpportunityAnalyzer />
               </ProtectedRoute>
             }
           />

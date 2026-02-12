@@ -8,6 +8,7 @@ import {
   LayoutDashboard,
   Clock as ClockIcon,
   Bookmark as BookmarkIcon,
+  LightbulbIcon,
 } from "lucide-react";
 import useAuthStore from "../../store/authStore";
 import toast from "react-hot-toast";
@@ -75,6 +76,17 @@ const Navbar = () => {
                   <BookmarkIcon className="w-5 h-5 text-text-secondary" />
                   <span className="text-sm font-medium text-text-primary hidden sm:inline">
                     Bookmarks
+                  </span>
+                </Link>
+
+                {/* Opportunity Analyzer Link */}
+                <Link
+                  to="/opportunity-analyzer"
+                  className="flex items-center space-x-2 px-4 py-2 rounded-lg hover:bg-background transition-colors bg-gradient-to-r from-purple-50 to-blue-50 dark:from-purple-900/20 dark:to-blue-900/20 border border-purple-200 dark:border-purple-700"
+                >
+                  <LightbulbIcon className="w-5 h-5 text-purple-600 dark:text-purple-400" />
+                  <span className="text-sm font-medium text-purple-700 dark:text-purple-300 hidden sm:inline">
+                    Opportunities
                   </span>
                 </Link>
 

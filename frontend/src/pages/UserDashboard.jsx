@@ -16,6 +16,7 @@ import {
   CheckCircle,
   Calendar,
   Users,
+  LightbulbIcon,
 } from "lucide-react";
 
 const UserDashboard = () => {
@@ -215,6 +216,13 @@ const UserDashboard = () => {
                 icon={MessageSquare}
                 label="AI Career Chat"
                 color="green"
+                badge="New"
+              />
+              <QuickActionButton
+                to="/opportunity-analyzer"
+                icon={LightbulbIcon}
+                label="Opportunity Analyzer"
+                color="amber"
                 badge="New"
               />
               <QuickActionButton

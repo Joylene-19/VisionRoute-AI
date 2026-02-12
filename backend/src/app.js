@@ -18,6 +18,7 @@ import notificationRoutes from "./routes/notificationRoutes.js";
 import aiRoutes from "./routes/aiRoutes.js";
 import pdfRoutes from "./routes/pdfRoutes.js";
 import bookmarkRoutes from "./routes/bookmarkRoutes.js";
+import opportunityRoutes from "./routes/opportunityRoutes.js";
 
 // Initialize Express app
 const app = express();
@@ -34,7 +35,7 @@ app.use(
   cors({
     origin: process.env.FRONTEND_URL || "http://localhost:5173",
     credentials: true,
-  })
+  }),
 );
 
 // Body parser
@@ -69,6 +70,7 @@ app.use("/api/notifications", notificationRoutes);
 app.use("/api/ai", aiRoutes);
 app.use("/api/pdf", pdfRoutes);
 app.use("/api/bookmarks", bookmarkRoutes);
+app.use("/api/opportunity", opportunityRoutes);
 
 // 404 handler
 app.use((req, res) => {
