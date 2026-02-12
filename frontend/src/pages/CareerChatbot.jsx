@@ -6,6 +6,7 @@ import {
   SparklesIcon,
   TrashIcon,
   ArrowPathIcon,
+  AcademicCapIcon,
 } from "@heroicons/react/24/outline";
 import { PaperAirplaneIcon } from "@heroicons/react/24/solid";
 import api from "../services/api";
@@ -19,6 +20,9 @@ const CareerChatbot = () => {
   const [sessionId, setSessionId] = useState(null);
   const [suggestedQuestions, setSuggestedQuestions] = useState([]);
   const [hasAssessment, setHasAssessment] = useState(false);
+  const [showRoadmapModal, setShowRoadmapModal] = useState(false);
+  const [careerOptions, setCareerOptions] = useState([]);
+  const [customCareer, setCustomCareer] = useState("");
   const messagesEndRef = useRef(null);
   const inputRef = useRef(null);
 
@@ -35,6 +39,7 @@ const CareerChatbot = () => {
   useEffect(() => {
     loadActiveSession();
     loadSuggestedQuestions();
+    loadCareerOptions();
   }, []);
 
   const loadActiveSession = async () => {
@@ -120,6 +125,53 @@ const CareerChatbot = () => {
     } catch (error) {
       console.error("Failed to clear history:", error);
     }
+  };
+
+  const loadCareerOptions = async () => {
+    try {
+      // Fetch latest assessment to get career matches
+      const response = await api.get("/api/assessment/results");
+      if (response.success && response.data?.careerMatches) {
+        const careers = response.data.careerMatches
+          .slice(0, 5)
+          .map((c) => c.title);
+        setCareerOptions(careers);
+      } else {
+        // Fallback careers if no assessment
+        setCareerOptions([
+          "Software Engineer",
+          "Doctor",
+          "Mechanical Engineer",
+          "Chartered Accountant",
+          "Lawyer",
+          "Data Scientist",
+          "Teacher",
+          "Architect",
+        ]);
+      }
+    } catch (error) {
+      console.error("Failed to load career options:", error);
+      // Fallback careers
+      setCareerOptions([
+        "Software Engineer",
+        "Doctor",
+        "Mechanical Engineer",
+        "Chartered Accountant",
+        "Lawyer",
+      ]);
+    }
+  };
+
+  const handleGenerateRoadmap = async (careerName) => {
+    setShowRoadmapModal(false);
+    setCustomCareer("");
+    const roadmapMessage = `Generate a study roadmap for ${careerName}`;
+    await handleSendMessage(roadmapMessage);
+  };
+
+  const handleCustomRoadmap = async () => {
+    if (!customCareer.trim()) return;
+    await handleGenerateRoadmap(customCareer.trim());
   };
 
   const handleKeyPress = (e) => {
@@ -291,6 +343,15 @@ const CareerChatbot = () => {
                 rows="2"
                 disabled={isLoading}
               />
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={() => setShowRoadmapModal(true)}
+                className="px-4 py-3 bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-xl hover:from-blue-600 hover:to-purple-700 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all shadow-lg hover:shadow-xl"
+                title="Generate Study Roadmap"
+              >
+                <AcademicCapIcon className="h-6 w-6" />
+              </motion.button>
               <button
                 onClick={() => handleSendMessage()}
                 disabled={isLoading || !inputMessage.trim()}
@@ -304,10 +365,155 @@ const CareerChatbot = () => {
               </button>
             </div>
             <p className="text-xs text-gray-500 dark:text-gray-500 mt-2">
-              Press Enter to send, Shift+Enter for new line
+              Press Enter to send, Shift+Enter for new line • 🎓 Roadmap icon
+              for study plans
             </p>
           </div>
         </div>
+
+        {/* Roadmap Modal */}
+        <AnimatePresence>
+          {showRoadmapModal && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4"
+              onClick={() => setShowRoadmapModal(false)}
+            >
+              <motion.div
+                initial={{ scale: 0.9, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                exit={{ scale: 0.9, opacity: 0 }}
+                onClick={(e) => e.stopPropagation()}
+                className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl max-w-2xl w-full max-h-[80vh] overflow-y-auto"
+              >
+                <div className="p-6">
+                  <div className="flex items-center justify-between mb-6">
+                    <div className="flex items-center gap-3">
+                      <div className="p-3 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-xl">
+                        <AcademicCapIcon className="h-6 w-6 text-white" />
+                      </div>
+                      <div>
+                        <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
+                          Generate Study Roadmap
+                        </h2>
+                        <p className="text-sm text-gray-600 dark:text-gray-400">
+                          Select a career to get a personalized 12-month plan
+                        </p>
+                      </div>
+                    </div>
+                    <button
+                      onClick={() => setShowRoadmapModal(false)}
+                      className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
+                    >
+                      <svg
+                        className="w-6 h-6"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M6 18L18 6M6 6l12 12"
+                        />
+                      </svg>
+                    </button>
+                  </div>
+
+                  <div className="space-y-4">
+                    {careerOptions.length > 0 && (
+                      <>
+                        <p className="text-gray-700 dark:text-gray-300 font-medium">
+                          {hasAssessment
+                            ? "Based on your assessment results:"
+                            : "Popular career paths:"}
+                        </p>
+                        <div className="space-y-2">
+                          {careerOptions.map((career, index) => (
+                            <motion.button
+                              key={index}
+                              whileHover={{ scale: 1.02 }}
+                              whileTap={{ scale: 0.98 }}
+                              onClick={() => handleGenerateRoadmap(career)}
+                              className="w-full p-3 bg-gradient-to-r from-blue-50 to-purple-50 dark:from-gray-700 dark:to-gray-700 hover:from-blue-100 hover:to-purple-100 dark:hover:from-gray-600 dark:hover:to-gray-600 border border-gray-200 dark:border-gray-600 rounded-xl text-left transition-all group"
+                            >
+                              <div className="flex items-center justify-between">
+                                <span className="text-gray-900 dark:text-white font-medium">
+                                  {career}
+                                </span>
+                                <svg
+                                  className="w-5 h-5 text-indigo-500 group-hover:translate-x-1 transition-transform"
+                                  fill="none"
+                                  stroke="currentColor"
+                                  viewBox="0 0 24 24"
+                                >
+                                  <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    strokeWidth={2}
+                                    d="M9 5l7 7-7 7"
+                                  />
+                                </svg>
+                              </div>
+                            </motion.button>
+                          ))}
+                        </div>
+                        <div className="flex items-center gap-3 my-4">
+                          <div className="flex-1 h-px bg-gray-300 dark:bg-gray-600"></div>
+                          <span className="text-sm text-gray-500 dark:text-gray-400 font-medium">
+                            OR
+                          </span>
+                          <div className="flex-1 h-px bg-gray-300 dark:bg-gray-600"></div>
+                        </div>
+                      </>
+                    )}
+
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                        Enter any career:
+                      </label>
+                      <div className="flex gap-2">
+                        <input
+                          type="text"
+                          value={customCareer}
+                          onChange={(e) => setCustomCareer(e.target.value)}
+                          onKeyPress={(e) => {
+                            if (e.key === "Enter") {
+                              handleCustomRoadmap();
+                            }
+                          }}
+                          placeholder="e.g., Architect, Psychologist, Chef..."
+                          className="flex-1 px-4 py-3 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:focus:ring-indigo-400 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400"
+                        />
+                        <motion.button
+                          whileHover={{ scale: 1.05 }}
+                          whileTap={{ scale: 0.95 }}
+                          onClick={handleCustomRoadmap}
+                          disabled={!customCareer.trim()}
+                          className="px-6 py-3 bg-gradient-to-r from-indigo-500 to-purple-600 text-white rounded-xl hover:from-indigo-600 hover:to-purple-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-lg font-semibold"
+                        >
+                          Generate
+                        </motion.button>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="mt-6 p-4 bg-blue-50 dark:bg-gray-700 rounded-xl">
+                    <p className="text-sm text-gray-600 dark:text-gray-300">
+                      <strong>Note:</strong> The roadmap will include
+                      month-by-month study plans, recommended resources,
+                      entrance exam preparation, and top colleges for your
+                      chosen career.
+                    </p>
+                  </div>
+                </div>
+              </motion.div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
     </div>
   );

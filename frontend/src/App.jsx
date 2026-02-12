@@ -6,6 +6,7 @@ import {
 } from "react-router-dom";
 import { Toaster } from "react-hot-toast";
 import Navbar from "./components/common/Navbar";
+import FloatingChatButton from "./components/common/FloatingChatButton";
 import ProtectedRoute from "./components/auth/ProtectedRoute";
 import AdminRoute from "./components/auth/AdminRoute";
 import AdminLayout from "./components/admin/AdminLayout";
@@ -61,6 +62,9 @@ function App() {
 
         {/* Navigation */}
         <Navbar />
+
+        {/* Floating Chat Button */}
+        <FloatingChatButton />
 
         {/* Routes */}
         <Routes>

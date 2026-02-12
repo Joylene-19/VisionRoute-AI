@@ -8,7 +8,10 @@ import AptitudeBarChart from "../components/charts/AptitudeBarChart";
 import { generateCareerReportPDF } from "../utils/pdfExport";
 import useAuthStore from "../store/authStore";
 import { BookmarkIcon as BookmarkOutlineIcon } from "@heroicons/react/24/outline";
-import { BookmarkIcon as BookmarkSolidIcon } from "@heroicons/react/24/solid";
+import {
+  BookmarkIcon as BookmarkSolidIcon,
+  ChatBubbleLeftRightIcon,
+} from "@heroicons/react/24/solid";
 
 const Results = () => {
   const location = useLocation();
@@ -56,7 +59,7 @@ const Results = () => {
       if (isBookmarked) {
         // Remove bookmark
         await api.delete(
-          `/api/bookmarks/career/${encodeURIComponent(career.title)}`
+          `/api/bookmarks/career/${encodeURIComponent(career.title)}`,
         );
         setBookmarkedCareers((prev) => {
           const newSet = new Set(prev);
@@ -84,7 +87,7 @@ const Results = () => {
     } catch (error) {
       console.error("Bookmark error:", error);
       toast.error(
-        isBookmarked ? "Failed to remove bookmark" : "Failed to add bookmark"
+        isBookmarked ? "Failed to remove bookmark" : "Failed to add bookmark",
       );
     }
   };
@@ -143,7 +146,7 @@ const Results = () => {
           headers: {
             Authorization: `Bearer ${token}`,
           },
-        }
+        },
       );
 
       if (!response.ok) {
@@ -151,7 +154,8 @@ const Results = () => {
           .json()
           .catch(() => ({ message: "Unknown error" }));
         throw new Error(
-          errorData.message || `HTTP ${response.status}: ${response.statusText}`
+          errorData.message ||
+            `HTTP ${response.status}: ${response.statusText}`,
         );
       }
 
@@ -367,7 +371,7 @@ const Results = () => {
                           >
                             {subject}
                           </span>
-                        )
+                        ),
                       )}
                     </div>
                   </div>
@@ -385,7 +389,7 @@ const Results = () => {
                             >
                               {subject}
                             </span>
-                          )
+                          ),
                         )}
                       </div>
                     </div>
@@ -566,6 +570,38 @@ const Results = () => {
             </div>
           </div>
         )}
+
+        {/* AI Chat Prompt */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="bg-gradient-to-br from-blue-500 via-purple-500 to-pink-500 rounded-2xl shadow-xl p-8 mb-6 text-white"
+        >
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-4">
+              <div className="bg-white bg-opacity-20 p-4 rounded-full">
+                <ChatBubbleLeftRightIcon className="w-8 h-8" />
+              </div>
+              <div>
+                <h3 className="text-2xl font-bold mb-2">
+                  Have Questions About Your Results?
+                </h3>
+                <p className="text-blue-100">
+                  Chat with our AI Career Counselor for personalized guidance on
+                  careers, colleges, entrance exams, and more!
+                </p>
+              </div>
+            </div>
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={() => navigate("/ai-chat")}
+              className="px-8 py-4 bg-white text-purple-600 rounded-xl font-bold hover:shadow-2xl transition-shadow whitespace-nowrap"
+            >
+              Chat Now
+            </motion.button>
+          </div>
+        </motion.div>
 
         {/* Resources */}
         {analysis.resources && (
