@@ -5,6 +5,17 @@ import {
   EyeIcon,
   ChevronRightIcon,
 } from "@heroicons/react/24/outline";
+import {
+  BookOpen,
+  GraduationCap,
+  ScrollText,
+  Target,
+  Trophy,
+  Book,
+  DollarSign,
+  Briefcase,
+  RefreshCw,
+} from "lucide-react";
 
 const AnalysisHistory = ({ analyses, onView, onDelete, currentAnalysisId }) => {
   const getConfidenceBadge = (score) => {
@@ -31,13 +42,13 @@ const AnalysisHistory = ({ analyses, onView, onDelete, currentAnalysisId }) => {
 
   const getEducationIcon = (level) => {
     const icons = {
-      "10th Pass": "📚",
-      "12th Pass": "🎓",
-      Diploma: "📜",
-      "Bachelor Degree": "🎯",
-      "Master Degree": "🏆",
+      "10th Pass": BookOpen,
+      "12th Pass": GraduationCap,
+      Diploma: ScrollText,
+      "Bachelor Degree": Target,
+      "Master Degree": Trophy,
     };
-    return icons[level] || "📖";
+    return icons[level] || Book;
   };
 
   if (!analyses || analyses.length === 0) {
@@ -85,9 +96,19 @@ const AnalysisHistory = ({ analyses, onView, onDelete, currentAnalysisId }) => {
           >
             <div className="flex items-start justify-between mb-2">
               <div className="flex items-center gap-2">
-                <span className="text-2xl">
-                  {getEducationIcon(analysis.educationLevel)}
-                </span>
+                <div className="p-1.5 bg-indigo-100 dark:bg-indigo-900/30 rounded-lg">
+                  {(() => {
+                    const IconComponent = getEducationIcon(
+                      analysis.educationLevel,
+                    );
+                    return (
+                      <IconComponent
+                        className="w-5 h-5 text-indigo-600 dark:text-indigo-400"
+                        strokeWidth={1.8}
+                      />
+                    );
+                  })()}
+                </div>
                 <div>
                   <h3 className="font-semibold text-gray-900 dark:text-white text-sm">
                     {analysis.educationLevel}
@@ -107,22 +128,38 @@ const AnalysisHistory = ({ analyses, onView, onDelete, currentAnalysisId }) => {
             {/* Top Recommendations Preview */}
             <div className="mb-3 space-y-1">
               {analysis.recommendations?.scholarships?.[0] && (
-                <div className="text-xs text-gray-600 dark:text-gray-400 truncate">
-                  💰 {analysis.recommendations.scholarships[0].name}
+                <div className="flex items-center gap-1.5 text-xs text-gray-600 dark:text-gray-400 truncate">
+                  <DollarSign
+                    className="w-3.5 h-3.5 flex-shrink-0 text-green-600 dark:text-green-400"
+                    strokeWidth={2}
+                  />
+                  <span className="truncate">
+                    {analysis.recommendations.scholarships[0].name}
+                  </span>
                 </div>
               )}
               {analysis.recommendations?.careerPaths?.[0] && (
-                <div className="text-xs text-gray-600 dark:text-gray-400 truncate">
-                  💼 {analysis.recommendations.careerPaths[0].title}
+                <div className="flex items-center gap-1.5 text-xs text-gray-600 dark:text-gray-400 truncate">
+                  <Briefcase
+                    className="w-3.5 h-3.5 flex-shrink-0 text-blue-600 dark:text-blue-400"
+                    strokeWidth={2}
+                  />
+                  <span className="truncate">
+                    {analysis.recommendations.careerPaths[0].title}
+                  </span>
                 </div>
               )}
             </div>
 
             {/* Regeneration count */}
             {analysis.regenerationCount > 0 && (
-              <div className="mb-3">
+              <div className="mb-3 flex items-center gap-1">
+                <RefreshCw
+                  className="w-3 h-3 text-purple-600 dark:text-purple-400"
+                  strokeWidth={2.5}
+                />
                 <span className="text-xs text-purple-600 dark:text-purple-400">
-                  ↻ Regenerated {analysis.regenerationCount}×
+                  Regenerated {analysis.regenerationCount}×
                 </span>
               </div>
             )}

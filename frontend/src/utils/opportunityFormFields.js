@@ -1,10 +1,10 @@
 // Education level options
 export const EDUCATION_LEVELS = [
-  { value: "10th Pass", label: "10th Pass", icon: "📚" },
-  { value: "12th Pass", label: "12th Pass", icon: "🎓" },
-  { value: "Diploma", label: "Diploma", icon: "📜" },
-  { value: "Bachelor Degree", label: "Bachelor Degree", icon: "🎯" },
-  { value: "Master Degree", label: "Master Degree", icon: "🏆" },
+  { value: "10th Pass", label: "10th Pass", icon: "BookOpen" },
+  { value: "12th Pass", label: "12th Pass", icon: "GraduationCap" },
+  { value: "Diploma", label: "Diploma", icon: "ScrollText" },
+  { value: "Bachelor Degree", label: "Bachelor Degree", icon: "Target" },
+  { value: "Master Degree", label: "Master Degree", icon: "Trophy" },
 ];
 
 // Common fields - Basic info needed for all

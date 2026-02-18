@@ -34,24 +34,34 @@ export const getUserDashboard = async (req, res) => {
       completedAt: -1,
     });
     const completedAssessments = assessments.filter(
-      (a) => a.status === "completed"
+      (a) => a.status === "completed",
     );
     const latestAssessment = completedAssessments[0];
 
     // Calculate stats
     const assessmentsCompleted = completedAssessments.length;
 
-    // Calculate career matches from latest assessment
+    // Calculate career matches from latest assessment's AI analysis
     let careerMatches = 0;
-    if (latestAssessment && latestAssessment.careerRecommendations) {
-      careerMatches = latestAssessment.careerRecommendations.length;
+    if (latestAssessment && latestAssessment.aiAnalysis?.careerPaths) {
+      careerMatches = latestAssessment.aiAnalysis.careerPaths.length;
     }
 
     // Calculate time spent (sum of all assessment times)
-    const totalMinutes = assessments.reduce(
-      (sum, a) => sum + (a.timeSpentMinutes || 0),
-      0
-    );
+    // If timeSpentMinutes is not set, calculate from timestamps
+    const totalMinutes = assessments.reduce((sum, a) => {
+      if (a.timeSpentMinutes && a.timeSpentMinutes > 0) {
+        return sum + a.timeSpentMinutes;
+      }
+      // Fallback: calculate from timestamps if completed
+      if (a.completedAt && a.createdAt) {
+        const duration = Math.floor(
+          (new Date(a.completedAt) - new Date(a.createdAt)) / (1000 * 60),
+        );
+        return sum + duration;
+      }
+      return sum;
+    }, 0);
     const hours = Math.floor(totalMinutes / 60);
     const minutes = totalMinutes % 60;
     const timeSpent = hours > 0 ? `${hours}h ${minutes}m` : `${minutes}m`;
@@ -83,10 +93,10 @@ export const getUserDashboard = async (req, res) => {
     // Sort by date
     recentActivity.sort((a, b) => new Date(b.date) - new Date(a.date));
 
-    // Get recommended careers from latest assessment
+    // Get recommended careers from latest assessment's AI analysis
     const recommendedCareers = [];
-    if (latestAssessment && latestAssessment.careerRecommendations) {
-      latestAssessment.careerRecommendations.slice(0, 3).forEach((career) => {
+    if (latestAssessment && latestAssessment.aiAnalysis?.careerPaths) {
+      latestAssessment.aiAnalysis.careerPaths.slice(0, 3).forEach((career) => {
         recommendedCareers.push({
           title: career.title || career.career,
           description:

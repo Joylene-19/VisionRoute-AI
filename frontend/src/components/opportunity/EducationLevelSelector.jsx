@@ -1,7 +1,22 @@
 import { motion } from "framer-motion";
 import { EDUCATION_LEVELS } from "../../utils/opportunityFormFields";
+import {
+  BookOpen,
+  GraduationCap,
+  ScrollText,
+  Target,
+  Trophy,
+} from "lucide-react";
 
 const EducationLevelSelector = ({ onSelect, selectedLevel }) => {
+  const iconMap = {
+    BookOpen,
+    GraduationCap,
+    ScrollText,
+    Target,
+    Trophy,
+  };
+
   return (
     <div className="max-w-4xl mx-auto">
       <div className="text-center mb-8">
@@ -30,7 +45,17 @@ const EducationLevelSelector = ({ onSelect, selectedLevel }) => {
             }`}
           >
             <div className="text-center">
-              <div className="text-4xl mb-3">{level.icon}</div>
+              <div className="flex justify-center mb-3">
+                {(() => {
+                  const IconComponent = iconMap[level.icon];
+                  return (
+                    <IconComponent
+                      className="w-12 h-12 text-indigo-600 dark:text-indigo-400"
+                      strokeWidth={1.5}
+                    />
+                  );
+                })()}
+              </div>
               <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
                 {level.label}
               </h3>

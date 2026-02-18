@@ -6,6 +6,7 @@ import OpportunityResults from "../components/opportunity/OpportunityResults";
 import AnalysisHistory from "../components/opportunity/AnalysisHistory";
 import api from "../services/api";
 import { XMarkIcon, Bars3Icon } from "@heroicons/react/24/outline";
+import { CheckCircle } from "lucide-react";
 
 const OpportunityAnalyzer = () => {
   const [step, setStep] = useState(1);
@@ -208,7 +209,11 @@ const OpportunityAnalyzer = () => {
                           : "bg-gray-200 dark:bg-gray-700 text-gray-500 dark:text-gray-400"
                     }`}
                   >
-                    {step > stepNum ? "✓" : stepNum}
+                    {step > stepNum ? (
+                      <CheckCircle className="w-6 h-6" strokeWidth={2.5} />
+                    ) : (
+                      stepNum
+                    )}
                   </div>
                   {stepNum < 3 && (
                     <div

@@ -5,6 +5,7 @@ import {
   getFieldsForLevel,
   validateFormData,
 } from "../../utils/opportunityFormFields";
+import { FileEdit, CheckCircle2 } from "lucide-react";
 
 const AdaptiveForm = ({ educationLevel, onSubmit, onBack, initialData }) => {
   const [formData, setFormData] = useState({
@@ -271,11 +272,24 @@ const AdaptiveForm = ({ educationLevel, onSubmit, onBack, initialData }) => {
             {!["10th Pass", "12th Pass"].includes(educationLevel) &&
               formData.educationStatus && (
                 <div className="mb-4 p-3 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-700 rounded-lg">
-                  <p className="text-sm text-blue-700 dark:text-blue-300">
-                    {formData.educationStatus === "Currently Studying"
-                      ? "📝 Please enter details based on semesters/years you have completed so far."
-                      : "✅ Please enter your final academic performance details."}
-                  </p>
+                  <div className="flex items-start gap-2">
+                    {formData.educationStatus === "Currently Studying" ? (
+                      <FileEdit
+                        className="w-4 h-4 text-blue-700 dark:text-blue-300 flex-shrink-0 mt-0.5"
+                        strokeWidth={2}
+                      />
+                    ) : (
+                      <CheckCircle2
+                        className="w-4 h-4 text-blue-700 dark:text-blue-300 flex-shrink-0 mt-0.5"
+                        strokeWidth={2}
+                      />
+                    )}
+                    <p className="text-sm text-blue-700 dark:text-blue-300">
+                      {formData.educationStatus === "Currently Studying"
+                        ? "Please enter details based on semesters/years you have completed so far."
+                        : "Please enter your final academic performance details."}
+                    </p>
+                  </div>
                 </div>
               )}
 
